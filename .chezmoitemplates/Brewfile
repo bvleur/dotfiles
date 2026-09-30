@@ -1,0 +1,58 @@
+# Brewfile — managed by chezmoi, installed automatically on a new machine at `chezmoi apply`.
+# Editing this file and running apply re-runs `brew bundle` automatically (via the run_onchange script).
+# Note: no --cleanup, add-only, packages you uninstalled by hand won't be reinstalled here.
+
+# === Shell tools ===
+brew "antidote"
+brew "pure"
+
+# === CLI tools ===
+brew "bat"           # cat replacement (syntax highlight)
+brew "btop"          # resource monitor
+brew "chezmoi"       # dotfiles management (self-bootstrap)
+brew "fzf"           # fuzzy finder
+brew "mas"           # Mac App Store CLI (used by the mas entries below)
+brew "neovim"        # editor
+brew "tlrc"          # tldr client
+brew "zoxide"        # smart cd
+cask "1password-cli"
+
+# === Modern CLI replacements ===
+brew "ripgrep"       # grep replacement (rg); nvim/fzf search backend
+brew "fd"            # find replacement; fzf/nvim find-files backend (respects .gitignore)
+brew "eza"           # ls replacement (icons / git status)
+
+# === Git ===
+brew "gh"            # GitHub CLI
+brew "lazygit"       # git TUI (invoked directly by LazyVim <leader>gg)
+
+# === Zsh prompt and plugins ===
+#brew "powerlevel10k"     # prompt (fastest per zsh-bench, instant prompt)
+#brew "zsh-autosuggestions"
+#brew "zsh-completions"
+#brew "zsh-syntax-highlighting"
+
+# === GUI apps ===
+cask "ghostty"
+cask "zed"
+cask "iina"
+cask "monitorcontrol"
+cask "linearmouse"
+cask "itsycal"
+cask "snapzy"
+cask "vicinae"
+
+# === bol only ===
+tap "homebrew/bol", "git@gitlab.bol.io:homebrew/homebrew-bol.git"
+brew "ghorg"
+brew "kubectx"
+cask "gcloud-cli"
+cask "jetbrains-toolbox"
+
+# === Mac App Store ===
+# Log in to the App Store first; installs apps associated with your Apple ID.
+mas "Keynote",                    id: 361285480
+mas "Numbers",                    id: 361304891
+mas "Pages",                      id: 361309726
+mas "1Password for Safari",       id: 1569813296
+#mas "Slack",                      id: 803453959

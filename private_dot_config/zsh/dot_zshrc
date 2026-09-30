@@ -1,0 +1,5 @@
+# ~/.config/zsh/.zshrc — loads every fragment in numeric order
+for _file in "${ZDOTDIR}"/conf.d/*.zsh(N); do
+  source "$_file"
+done
+unset _file

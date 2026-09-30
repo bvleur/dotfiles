@@ -1,0 +1,16 @@
+# .zsh_plugins.txt
+# pick only the plugins you want and remove the rest
+using:mattmc3/zephyr path:plugins
+color
+completion
+compstyle
+confd
+directory
+editor
+environment
+history
+homebrew
+macos
+prompt
+utility
+zfunctions

@@ -1,0 +1,15 @@
+#!/bin/bash
+set -eu
+
+# --- Ensure Homebrew exists ---
+if ! command -v brew >/dev/null 2>&1; then
+  echo "==> Homebrew not detected, installing..."
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# --- Install per Brewfile (content inlined, editing Brewfile triggers rerun) ---
+echo "==> brew bundle syncing packages..."
+brew bundle install --file=/dev/stdin <<'BREWFILE'
+{{ includeTemplate "Brewfile" . }}
+BREWFILE

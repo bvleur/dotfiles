@@ -1,0 +1,2 @@
+setopt autocd
+zstyle ':zephyr:plugin:prompt' theme 'pure'
