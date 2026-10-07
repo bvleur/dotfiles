@@ -46,8 +46,11 @@ cask "vicinae"
 tap "homebrew/bol", "git@gitlab.bol.io:homebrew/homebrew-bol.git"
 brew "ghorg"
 brew "kubectx"
+brew "jenv"
 cask "gcloud-cli"
 cask "jetbrains-toolbox"
+cask "zulu@25"
+
 
 # === Mac App Store ===
 # Log in to the App Store first; installs apps associated with your Apple ID.
