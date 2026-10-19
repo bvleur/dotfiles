@@ -1,0 +1,10 @@
+#!/bin/bash
+# Itsycal preferences
+# hash: {{ include ".chezmoiscripts/run_onchange_after_itsycal-defaults.sh.tmpl" | sha256sum }}
+set -eu
+
+defaults write com.mowglii.ItsycalApp MenuBarIconType  -int 0   # icon type: calendar icon
+defaults write com.mowglii.ItsycalApp ShowWeeks        -int 1   # show week numbers
+defaults write com.mowglii.ItsycalApp ShowEventDays    -int 7   # show events 7 days ahead
+defaults write com.mowglii.ItsycalApp MoCalendarNumRows -int 10 # calendar popup rows
+defaults write com.mowglii.ItsycalApp HighlightedDOWs  -int 0   # no highlighted days

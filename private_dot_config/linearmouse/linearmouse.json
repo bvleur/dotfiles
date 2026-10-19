@@ -1,0 +1,39 @@
+{
+  "$schema" : "https:\/\/schema.linearmouse.app\/0.11.4",
+  "schemes" : [
+    {
+      "buttons" : {
+        "gesture" : {
+          "actions" : {
+            "down" : "appExpose",
+            "left" : "missionControl.spaceLeft",
+            "right" : "missionControl.spaceRight",
+            "up" : "missionControl"
+          },
+          "enabled" : true,
+          "threshold" : 50,
+          "trigger" : {
+            "button" : {
+              "controlID" : 195,
+              "kind" : "logitechControl",
+              "productID" : 45108
+            },
+            "command" : false,
+            "control" : false,
+            "option" : false,
+            "shift" : false
+          }
+        },
+        "universalBackForward" : true
+      },
+      "if" : {
+        "device" : {
+          "category" : "mouse",
+          "productID" : "0xb034",
+          "productName" : "MX Master 3S M",
+          "vendorID" : "0x46d"
+        }
+      }
+    }
+  ]
+}
