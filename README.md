@@ -29,27 +29,39 @@ Some configuration is machine-specific, controlled by the `purpose` variable in 
 
 ## Installing on a new machine
 
-### 1. Prerequisites
-
-- macOS
-- Internet connection
-- For `purpose = "bol"`: access to `gitlab.bol.io` (VPN or corporate network) for the private Homebrew tap
-
-### 2. Install chezmoi and initialize the repo
+Run this single command and follow the prompt:
 
 ```bash
-# Install chezmoi (bootstraps itself, no Homebrew required)
-sh -c "$(curl -fsLS get.chezmoi.io)"
-
-# Initialize from the repo (replace with your repo URL)
-chezmoi init https://github.com/<your-username>/dotfiles.git
+bash <(curl -fsSL https://raw.githubusercontent.com/bvleur/dotfiles/main/install.sh)
 ```
 
-### 3. Set the machine type
+The script will:
+1. Install Homebrew if not already present
+2. Install chezmoi via Homebrew
+3. Ask whether this is a `home` or `bol` machine
+4. Write `~/.config/chezmoi/chezmoi.toml` accordingly
+5. Run `chezmoi init` and `chezmoi apply`
 
-Create `~/.config/chezmoi/chezmoi.toml` **before** running `chezmoi apply`:
+> **Note:** For `purpose = "bol"`, the private Homebrew tap (`gitlab.bol.io`) must be reachable. Make sure your SSH key for GitLab is set up, or skip the tap and add it manually later.
 
-**Personal laptop:**
+### Manual fallback
+
+<details>
+<summary>Step-by-step without the script</summary>
+
+**1. Install Homebrew** (if not present):
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+**2. Install chezmoi:**
+```bash
+brew install chezmoi
+```
+
+**3. Set the machine type** — create `~/.config/chezmoi/chezmoi.toml` before applying:
+
+Personal laptop:
 ```bash
 mkdir -p ~/.config/chezmoi
 cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
@@ -58,7 +70,7 @@ cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
 EOF
 ```
 
-**Work laptop (bol):**
+Work laptop (bol):
 ```bash
 mkdir -p ~/.config/chezmoi
 cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
@@ -67,15 +79,15 @@ cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
 EOF
 ```
 
-### 4. Apply the configuration
-
+**4. Initialize and apply:**
 ```bash
+chezmoi init https://github.com/bvleur/dotfiles.git
 chezmoi apply
 ```
 
-This also automatically installs Homebrew (if not present) and runs `brew bundle`.
+**5.** Sign in to the App Store and install `mas` apps if needed (requires Apple ID).
 
-> **Note:** For `purpose = "bol"`, the private Homebrew tap (`gitlab.bol.io`) must be reachable. Make sure your SSH key for GitLab is set up, or skip the tap and add it manually later.
+</details>
 
 ---
 
@@ -89,15 +101,3 @@ This also automatically installs Homebrew (if not present) and runs `brew bundle
 | `chezmoi diff` | Preview what would change before applying |
 | `brewfile-drift` | Compare installed packages against the Brewfile |
 | `brewfile-edit` | Open the Brewfile in `$EDITOR` |
-
----
-
-## New machine checklist
-
-```
-1. Install chezmoi
-2. chezmoi init <repo-url>
-3. Create chezmoi.toml with purpose = "home" or "bol"
-4. chezmoi apply
-5. Sign in to the App Store and install mas apps if needed (requires Apple ID)
-```
