@@ -1,0 +1,7 @@
+#!/bin/bash
+# Compact menubar icon spacing
+# hash: {{ include ".chezmoiscripts/run_onchange_after_menubar-density.sh.tmpl" | sha256sum }}
+set -eu
+
+defaults write -globalDomain NSStatusItemSpacing        -int 6
+defaults write -globalDomain NSStatusItemSelectionPadding -int 6
