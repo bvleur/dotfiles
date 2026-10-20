@@ -1,5 +1,8 @@
 {{- if eq .purpose "bol" }}
 [user]
 	name = Bram van Leur
-	email = bvanleur@bol.com
+	email = bram@vleur.nl
+# Any repo with a bol GitLab remote commits as the bol identity (note: also when it has a GitHub remote next to it).
+[includeIf "hasconfig:remote.*.url:git@gitlab.bol.io:*/**"]
+	path = ~/.config/git/bol-identity
 {{- end }}
