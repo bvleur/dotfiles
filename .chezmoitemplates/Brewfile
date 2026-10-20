@@ -13,6 +13,7 @@ brew "chezmoi"       # dotfiles management (self-bootstrap)
 brew "fzf"           # fuzzy finder
 brew "mas"           # Mac App Store CLI (used by the mas entries below)
 brew "neovim"        # editor
+brew "node"          # Node.js (needed for the bundling-explained Remotion project)
 brew "tlrc"          # tldr client
 brew "zoxide"        # smart cd
 cask "1password-cli"
@@ -47,6 +48,7 @@ cask "ticktick"
 # === bol only ===
 tap "homebrew/bol", "git@gitlab.bol.io:homebrew/homebrew-bol.git"
 brew "ghorg"
+brew "glab"          # GitLab CLI
 brew "kubectx"
 brew "jenv"
 cask "gcloud-cli"
