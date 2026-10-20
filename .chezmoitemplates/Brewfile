@@ -11,6 +11,7 @@ brew "bat"           # cat replacement (syntax highlight)
 brew "btop"          # resource monitor
 brew "chezmoi"       # dotfiles management (self-bootstrap)
 brew "fzf"           # fuzzy finder
+brew "httpie"        # HTTP client
 brew "mas"           # Mac App Store CLI (used by the mas entries below)
 brew "neovim"        # editor
 brew "node"          # Node.js (needed for the bundling-explained Remotion project)
