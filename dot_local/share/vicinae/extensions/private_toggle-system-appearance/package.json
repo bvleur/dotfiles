@@ -1,0 +1,34 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "toggle-system-appearance",
+  "title": "Toggle System Appearance",
+  "description": "Switch macOS between dark and light mode.",
+  "categories": [
+    "System"
+  ],
+  "license": "MIT",
+  "author": "bvleur",
+  "icon": "extension_icon.png",
+  "commands": [
+    {
+      "name": "toggle-system-appearance",
+      "title": "Toggle System Appearance",
+      "subtitle": "macOS",
+      "description": "Switch between dark and light mode.",
+      "mode": "no-view"
+    }
+  ],
+  "preferences": [],
+  "dependencies": {
+    "@vicinae/api": "^0.29.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "19.1.17",
+    "typescript": "5.9.2"
+  },
+  "scripts": {
+    "build": "vici build",
+    "dev": "vici develop"
+  }
+}
