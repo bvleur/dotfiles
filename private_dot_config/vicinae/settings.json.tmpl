@@ -1,0 +1,35 @@
+// Managed by chezmoi (private_dot_config/vicinae/settings.json.tmpl). Vicinae rewrites this file when you change settings in
+// the GUI: run `chezmoi-drift` afterwards and copy the change into the template.
+{
+   "$schema": "https://vicinae.com/schemas/config.json",
+{{- if eq .purpose "home" }}
+   "theme": {
+      "light": {
+         "name": "elementary-light"
+      }
+   },
+{{- end }}
+   "providers": {
+      "applications": {
+         "entrypoints": {
+{{- if eq .purpose "bol" }}
+            "com.jetbrains.intellij": { "shortcut": "super+control+J" },
+            "com.microsoft.Outlook": { "shortcut": "super+control+M" },
+            "com.microsoft.m365copilot": { "shortcut": "super+control+shift+;" },
+            "com.microsoft.teams2": { "shortcut": "super+control+Z" },
+            "com.tinyspeck.slackmacgap": { "shortcut": "super+control+C" },
+            "org.mozilla.firefox": { "shortcut": "super+control+B" },
+{{- else }}
+            "com.apple.MobileSMS": { "shortcut": "super+control+S" },
+            "com.apple.Safari": { "shortcut": "super+control+B" },
+            "com.apple.mail": { "shortcut": "super+control+M" },
+{{- end }}
+            "com.1password.1password": { "shortcut": "super+control+1" },
+            "com.anthropic.claudefordesktop": { "shortcut": "super+control+;" },
+            "com.apple.Music": { "shortcut": "super+control+A" },
+            "com.mitchellh.ghostty": { "shortcut": "super+control+T" },
+            "dev.zed.Zed": { "shortcut": "super+control+E" }
+         }
+      }
+   }
+}
