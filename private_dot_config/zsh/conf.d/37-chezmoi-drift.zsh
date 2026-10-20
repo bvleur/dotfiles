@@ -1,7 +1,10 @@
 # 37-chezmoi-drift.zsh — one command for "what differs between this laptop and the dotfiles repo"
 #
-# chezmoi-drift   files on this laptop that changed outside chezmoi (e.g. Vicinae rewriting its settings),
-#                 files that `chezmoi apply` would still change, unpushed/unpulled dotfiles commits, and brewfile-drift
+# chezmoi-drift    runs, in order: managed files and repo sync (below), then the specific drifts
+#                    brewfile-drift             (36-brewfile.zsh)
+#                    vicinae-shortcuts-drift    (38-vicinae-drift.zsh)
+#                    vicinae-settings-drift     (38-vicinae-drift.zsh)
+#                  Each of those can be run on its own. Add new ones to the list at the bottom.
 #
 # Fixing what it shows: plain files → `chezmoi re-add <file>`; templates (.tmpl) → `chezmoi diff <file>` and copy by hand
 # into the template (re-add would overwrite the template with this laptop's rendered output).
@@ -10,13 +13,14 @@ chezmoi-drift() {
   emulate -L zsh
   command -v chezmoi >/dev/null 2>&1 || { print -u2 "✗ chezmoi not found"; return 1; }
   local src; src=$(command chezmoi source-path 2>/dev/null) || return 1
-  local line col1 col2 found
+  local line found
+  # the Vicinae settings have their own, more specific drift commands
+  local skip='\.config/vicinae/settings\.json$'
 
-  print "── Changed on this laptop since the last apply (re-add, or copy into the template) ──"
+  print "── Managed files changed on this laptop since the last apply ──"
   found=0
   while IFS= read -r line; do
-    col1=${line[1]}
-    [[ $col1 == ' ' ]] && continue
+    [[ ${line[1]} == ' ' || $line =~ $skip ]] && continue
     print "  $line"; found=1
   done < <(chezmoi status 2>/dev/null)
   (( found )) || print "  ✓ none"
@@ -25,8 +29,7 @@ chezmoi-drift() {
   print "── Not yet applied from the repo (chezmoi apply would change these) ──"
   found=0
   while IFS= read -r line; do
-    col2=${line[2]}
-    [[ $col2 == ' ' ]] && continue
+    [[ ${line[2]} == ' ' || $line =~ $skip ]] && continue
     print "  $line"; found=1
   done < <(chezmoi status 2>/dev/null)
   (( found )) || print "  ✓ none"
@@ -43,6 +46,10 @@ chezmoi-drift() {
   (( ${behind:-0} > 0 )) 2>/dev/null && print "  $behind commit(s) to pull (chezmoi update)"
   [[ -z $dirty && $ahead == 0 && $behind == 0 ]] && print "  ✓ in sync"
 
-  print ""
-  brewfile-drift
+  # specific drifts
+  local drift
+  for drift in brewfile-drift vicinae-shortcuts-drift vicinae-settings-drift; do
+    print ""
+    (( ${+functions[$drift]} )) && $drift || print "  ✗ $drift is not loaded"
+  done
 }
