@@ -1,0 +1,79 @@
+#!/bin/bash
+# Rectangle preferences, from .chezmoitemplates/RectangleConfig.json (Rectangle's own export format).
+# config hash: {{ includeTemplate "RectangleConfig.json" . | sha256sum }}
+# script hash: {{ include ".chezmoiscripts/run_onchange_after_darwin-rectangle-config.sh.tmpl" | sha256sum }}
+#
+# Why `defaults` instead of Rectangle's own auto-import (~/Library/Application Support/Rectangle/RectangleConfig.json):
+# - the import resets every shortcut missing from the file back to Rectangle's built-in defaults, so a config with
+#   only next/previous display would still bring back ⌥⌘← for left half and the like (which collides with tab
+#   switching in browsers);
+# - it asks "Apply Rectangle configuration?" on launch and then renames the file, which fights chezmoi.
+# So this script applies the same JSON itself, and explicitly clears (empty dict = "no shortcut") every action that
+# has a built-in default but is not in the JSON.
+#
+# Changing the setup: edit the JSON, or set it up in Rectangle's settings and use Export to get the values.
+set -eu
+
+DOMAIN=com.knollsoft.Rectangle
+
+if [ ! -d "/Applications/Rectangle.app" ]; then
+  echo "==> Rectangle not installed, skipping its configuration"
+  exit 0
+fi
+command -v jq >/dev/null 2>&1 || { echo "✗ jq not found, cannot apply Rectangle config" >&2; exit 1; }
+
+CONFIG=$(cat <<'RECTANGLECONFIG'
+{{ includeTemplate "RectangleConfig.json" . }}
+RECTANGLECONFIG
+)
+
+# Actions that get a shortcut by default (Spectacle or "Recommended" set, see WindowAction.swift in Rectangle)
+DEFAULT_BOUND_ACTIONS="leftHalf rightHalf topHalf bottomHalf topLeft topRight bottomLeft bottomRight
+  maximize maximizeHeight larger smaller center restore
+  firstThird firstTwoThirds centerThird lastTwoThirds lastThird centerTwoThirds
+  previousDisplay nextDisplay"
+
+# Rectangle must not be running while its preferences change, otherwise it keeps its in-memory values
+was_running=0
+if pgrep -x Rectangle >/dev/null 2>&1; then
+  was_running=1
+  pkill -x Rectangle || true
+  for _ in $(seq 1 20); do
+    pgrep -x Rectangle >/dev/null 2>&1 || break
+    sleep 0.5
+  done
+fi
+
+echo "==> Applying Rectangle preferences"
+
+# settings: {"key": {"bool"|"int"|"float"|"double"|"string": value}}
+while IFS=$'\t' read -r key type value; do
+  case "$type" in
+    bool)          defaults write "$DOMAIN" "$key" -bool "$value" ;;
+    int)           defaults write "$DOMAIN" "$key" -int "$value" ;;
+    float|double)  defaults write "$DOMAIN" "$key" -float "$value" ;;
+    string)        defaults write "$DOMAIN" "$key" -string "$value" ;;
+  esac
+done < <(jq -r '.defaults | to_entries[] | .key as $k | .value | to_entries[] | select(.value != null)
+               | [$k, .key, (.value | tostring)] | @tsv' <<<"$CONFIG")
+
+# shortcuts from the JSON
+while IFS=$'\t' read -r action keycode flags; do
+  defaults write "$DOMAIN" "$action" -dict keyCode -int "$keycode" modifierFlags -int "$flags"
+done < <(jq -r '.shortcuts | to_entries[] | [.key, .value.keyCode, .value.modifierFlags] | @tsv' <<<"$CONFIG")
+
+# clear every default shortcut that the JSON does not set
+for action in $DEFAULT_BOUND_ACTIONS; do
+  if ! jq -e --arg a "$action" '.shortcuts | has($a)' <<<"$CONFIG" >/dev/null; then
+    defaults write "$DOMAIN" "$action" -dict
+  fi
+done
+
+# old names of the half actions: Rectangle copies these over the new names on launch, so they must not linger
+for alias in leftSide rightSide bottomSide topSide centerSection; do
+  defaults delete "$DOMAIN" "$alias" >/dev/null 2>&1 || true
+done
+
+# Start (or restart) Rectangle. On first launch macOS asks for Accessibility access: grant it once per Mac.
+open -a Rectangle
+[ "$was_running" = 1 ] && echo "==> Rectangle restarted" || echo "==> Rectangle started"

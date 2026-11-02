@@ -43,6 +43,7 @@ cask "linearmouse"
 cask "itsycal"
 cask "snapzy"
 cask "vicinae"
+cask "rectangle"       # only next/previous display shortcuts, config: .chezmoitemplates/RectangleConfig.json
 cask "ticktick"
 
 {{- if eq .purpose "bol" }}

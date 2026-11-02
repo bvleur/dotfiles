@@ -1,0 +1,13 @@
+{
+  "bundleId" : "com.knollsoft.Rectangle",
+  "version" : "chezmoi",
+  "defaults" : {
+    "launchOnLogin" : { "bool" : true },
+    "SUEnableAutomaticChecks" : { "bool" : true },
+    "windowSnapping" : { "int" : 2 }
+  },
+  "shortcuts" : {
+    "previousDisplay" : { "keyCode" : 123, "modifierFlags" : 1835008 },
+    "nextDisplay" : { "keyCode" : 124, "modifierFlags" : 1835008 }
+  }
+}
