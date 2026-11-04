@@ -8,6 +8,10 @@
   },
   "shortcuts" : {
     "previousDisplay" : { "keyCode" : 115, "modifierFlags" : 1310720 },
-    "nextDisplay" : { "keyCode" : 119, "modifierFlags" : 1310720 }
+    "nextDisplay" : { "keyCode" : 119, "modifierFlags" : 1310720 },
+    "maximize" : { "keyCode" : 116, "modifierFlags" : 1310720 },
+    "center" : { "keyCode" : 121, "modifierFlags" : 1310720 },
+    "larger" : { "keyCode" : 116, "modifierFlags" : 1835008 },
+    "smaller" : { "keyCode" : 121, "modifierFlags" : 1835008 }
   }
 }

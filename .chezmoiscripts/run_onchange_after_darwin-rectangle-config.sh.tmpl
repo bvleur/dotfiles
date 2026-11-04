@@ -11,8 +11,9 @@
 # So this script applies the same JSON itself, and explicitly clears (empty dict = "no shortcut") every action that
 # has a built-in default but is not in the JSON.
 #
-# Shortcut key codes: Rectangle ignores the fn modifier, and on a Mac keyboard fn+←/→ arrives as Home/End.
-# So fn⌃⌘←/→ is stored as ⌃⌘Home (keyCode 115) / ⌃⌘End (keyCode 119), modifierFlags ⌃|⌘ = 1310720.
+# Shortcut key codes: Rectangle ignores the fn modifier, and on a Mac keyboard fn+arrow arrives as
+# Home (←, 115) / End (→, 119) / PageUp (↑, 116) / PageDown (↓, 121).
+# modifierFlags: ⌃⌘ = 1310720, ⌃⌥⌘ = 1835008.
 #
 # Changing the setup: edit the JSON, or set it up in Rectangle's settings and use Export to get the values.
 set -eu
