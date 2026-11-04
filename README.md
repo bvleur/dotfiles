@@ -15,7 +15,7 @@ Based on:
 | `private_dot_config/zsh/` | Zsh configuration, split into `conf.d/` fragments |
 | `.chezmoitemplates/Brewfile` | Homebrew package list, installed via `brew bundle` |
 | `.chezmoiscripts/` | Script that automatically runs `brew bundle` on `chezmoi apply` |
-| `.chezmoitemplates/RectangleConfig.json` | Rectangle settings (its export format): only ⌃⌥⌘← / ⌃⌥⌘→ to move a window to the previous / next display, all other Rectangle shortcuts and drag-to-snap off. Applied by `run_onchange_after_darwin-rectangle-config.sh`; grant Rectangle Accessibility access once per Mac |
+| `.chezmoitemplates/RectangleConfig.json` | Rectangle settings (its export format): only fn⌃⌘← / fn⌃⌘→ (= ⌃⌘Home / ⌃⌘End on a keyboard with those keys) to move a window to the previous / next display, next to macOS' own fn⌃-arrow tiling, all other Rectangle shortcuts and drag-to-snap off. Applied by `run_onchange_after_darwin-rectangle-config.sh`; grant Rectangle Accessibility access once per Mac |
 
 ### Machine type (`purpose`)
 

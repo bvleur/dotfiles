@@ -7,7 +7,7 @@
     "windowSnapping" : { "int" : 2 }
   },
   "shortcuts" : {
-    "previousDisplay" : { "keyCode" : 123, "modifierFlags" : 1835008 },
-    "nextDisplay" : { "keyCode" : 124, "modifierFlags" : 1835008 }
+    "previousDisplay" : { "keyCode" : 115, "modifierFlags" : 1310720 },
+    "nextDisplay" : { "keyCode" : 119, "modifierFlags" : 1310720 }
   }
 }
