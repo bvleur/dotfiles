@@ -100,5 +100,6 @@ chezmoi apply
 | `chezmoi edit <file>` | Edit a dotfile through chezmoi |
 | `chezmoi apply` | Apply changes to the system |
 | `chezmoi diff` | Preview what would change before applying |
+| `chezmoi-drift` | Everything that differs between this laptop and the repo (files, git, Brewfile, Vicinae), each with the commands to fix it |
 | `brewfile-drift` | Compare installed packages against the Brewfile |
 | `brewfile-edit` | Open the Brewfile in `$EDITOR` |
