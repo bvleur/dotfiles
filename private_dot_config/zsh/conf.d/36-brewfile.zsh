@@ -1,7 +1,7 @@
 # 36-brewfile.zsh — Brewfile drift check (keep it hand-curated, avoid "installed then forgot to add")
 #
 # Workflow: brew install freely → occasionally `brewfile-drift` to see drift
-#         → `brewfile-edit` to add keepers into the right section → chezmoi cd && git commit
+#         → `brewfile-edit` to add keepers into the right section → it shows the commit command when the file changed
 # The Brewfile is a chezmoi template, at source dir .chezmoitemplates/Brewfile.
 
 # absolute path to the source Brewfile (resolved lazily, not calling chezmoi at shell startup)
@@ -110,5 +110,18 @@ brewfile-drift() {
   fi
 }
 
-#: open the Brewfile in $EDITOR
-brewfile-edit() { ${EDITOR:-nvim} "$(_brewfile_path)"; }
+#: open the Brewfile in $EDITOR; shows how to commit when it changed
+brewfile-edit() {
+  emulate -L zsh
+  local _DRIFT_TTY; _drift_tty
+  local bf; bf=$(_brewfile_path)
+  local before after
+  [[ -r $bf ]] && before=$(<$bf)
+  ${=EDITOR:-nvim} "$bf" || return
+  [[ -r $bf ]] && after=$(<$bf)
+  [[ $after == "$before" ]] && return 0
+
+  print ""
+  _drift_header "Brewfile changed"
+  _drift_fix_commit "Brewfile: …" .chezmoitemplates/Brewfile
+}
