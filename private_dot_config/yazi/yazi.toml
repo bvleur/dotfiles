@@ -4,3 +4,19 @@ prepend_previewers = [
   { url = "*.docx", run = "doxx" },
   { url = "*.md", run = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"' },
 ]
+
+# Text-ish files open in Zed (default for interactive open); nvim stays available via the open menu (`O`).
+[opener]
+zed = [
+  { run = 'zed "$@"', desc = "Zed", orphan = true, for = "unix" },
+]
+edit = [
+  { run = '${EDITOR:-nvim} "$@"', desc = "$EDITOR", block = true, for = "unix" },
+]
+
+[open]
+prepend_rules = [
+  { mime = "text/*", use = [ "zed", "edit" ] },
+  { mime = "{application,image}/{json,xml,toml,yaml,x-yaml,javascript,x-javascript,x-sh,x-shellscript,x-ndjson,x-subrip,svg+xml}", use = [ "zed", "edit" ] },
+  { url = "*.{toml,yaml,yml,json,jsonc,lua,zsh,sh,bash,env,conf,ini,tmpl,md,txt,log,csv,tsv,js,ts,tsx,jsx,py,rb,go,rs,java,kt,xml,html,css}", use = [ "zed", "edit" ] },
+]
