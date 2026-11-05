@@ -2,4 +2,5 @@
 prepend_previewers = [
   { mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document", run = "doxx" },
   { url = "*.docx", run = "doxx" },
+  { url = "*.md", run = 'piper -- CLICOLOR_FORCE=1 glow -w=$w -s=dark "$1"' },
 ]

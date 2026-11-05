@@ -3,3 +3,10 @@
 
 [[plugin.deps]]
 use = "bgreenwell/doxx"
+
+[[plugin.deps]]
+use = "Lil-Dank/lazygit"
+
+# Runs a shell pipeline as previewer; used for markdown via glow (the standalone glow.yazi is deprecated in favour of piper)
+[[plugin.deps]]
+use = "yazi-rs/plugins:piper"
