@@ -55,5 +55,20 @@ _drift_fix() {
   print -r -- "    $(_drift_c cyan)→ $cmd$(_drift_c reset)${why:+  $(_drift_c dim)# $why$(_drift_c reset)}"
 }
 
+# → how to commit changes in the dotfiles repo; every command that suggests a commit uses this, so the tip reads
+#   the same everywhere. Usage: _drift_fix_commit [message [path …]]
+#   message  pre-filled commit message (default "…", to fill in yourself)
+#   path     stage only these, relative to the source dir (default: everything, git add -A)
+_drift_fix_commit() {
+  local msg=${1:-…}; (( $# )) && shift
+  local what="commit them" add="-A"
+  if (( $# )); then
+    add="-- ${(j: :)${(q-)@}}"
+    what="commit it"
+  fi
+  _drift_fix "chezmoi git -- add $add && chezmoi git -- commit -m \"$msg\"" "$what"
+  _drift_fix 'lazygit -p "$(chezmoi source-path)"' "or review and commit in lazygit"
+}
+
 # plain explanatory line
 _drift_note() { print -r -- "  $(_drift_c dim)$*$(_drift_c reset)"; }
