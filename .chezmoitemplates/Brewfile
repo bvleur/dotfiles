@@ -17,6 +17,7 @@ brew "mise"          # dev-tool version manager (owns node/java/python/...)
 brew "neovim"        # editor
 brew "tlrc"          # tldr client
 brew "yazi"          # terminal file manager (`y`), config: ~/.config/yazi
+brew "doxx"          # .docx viewer, used by the doxx yazi plugin
 brew "zoxide"        # smart cd
 cask "1password-cli"
 
@@ -24,14 +25,6 @@ cask "1password-cli"
 brew "ripgrep"       # grep replacement (rg); nvim/fzf search backend
 brew "fd"            # find replacement; fzf/nvim find-files backend (respects .gitignore)
 brew "eza"           # ls replacement (icons / git status)
-
-# === yazi previews (images, PDF, video, archives, Office via LibreOffice) ===
-brew "ffmpeg"        # video thumbnails
-brew "poppler"       # pdftoppm: PDF preview, also renders the Office -> PDF page
-brew "imagemagick"   # image formats yazi can not decode itself
-brew "jq"            # JSON preview
-brew "sevenzip"      # archive preview/extraction
-cask "libreoffice"   # headless Office -> PDF conversion for the office previewer
 
 # === Git ===
 brew "gh"            # GitHub CLI

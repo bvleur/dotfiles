@@ -1,0 +1,5 @@
+# yazi plugins, installed by .chezmoiscripts/run_onchange_after_darwin-yazi-plugins.sh (`ya pkg install`).
+# Add one with `ya pkg add <owner>/<repo>` and copy the resulting entry (with its pinned rev/hash) here.
+
+[[plugin.deps]]
+use = "bgreenwell/doxx"
