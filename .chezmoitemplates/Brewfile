@@ -13,8 +13,8 @@ brew "chezmoi"       # dotfiles management (self-bootstrap)
 brew "fzf"           # fuzzy finder
 brew "httpie"        # HTTP client
 brew "mas"           # Mac App Store CLI (used by the mas entries below)
+brew "mise"          # dev-tool version manager (owns node/java/python/...)
 brew "neovim"        # editor
-brew "node"          # Node.js (needed for the bundling-explained Remotion project)
 brew "tlrc"          # tldr client
 brew "zoxide"        # smart cd
 cask "1password-cli"
@@ -48,14 +48,14 @@ cask "ticktick"
 
 {{- if eq .purpose "bol" }}
 # === bol only ===
+# Java (previously `cask "zulu@25"` + `brew "jenv"`) is now managed by mise;
+# see `[tools] java` in ~/.config/mise/config.toml.
 tap "homebrew/bol", "git@gitlab.bol.io:homebrew/homebrew-bol.git"
 brew "ghorg"
 brew "glab"          # GitLab CLI
 brew "kubectx"
-brew "jenv"
 cask "gcloud-cli"
 cask "jetbrains-toolbox"
-cask "zulu@25"
 {{- end }}
 
 

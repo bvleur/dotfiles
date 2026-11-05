@@ -1,0 +1,20 @@
+# ~/.config/mise/config.toml — global mise config, managed by chezmoi.
+# Pin tools here, then run `mise install` (or let the shell hook install on cd).
+# Per-project overrides live in a `.mise.toml` at the project root.
+
+[tools]
+node = "lts"
+{{- if eq .purpose "bol" }}
+# bol-only: previously via `cask "zulu@25"` + `brew "jenv"`, now owned by mise.
+java = "zulu-25"
+{{- end }}
+# python = "3.12"
+
+[settings]
+# Auto-install missing tool versions when a project's .mise.toml is loaded.
+# Set to false if you'd rather be prompted first.
+# experimental = false
+# auto_install = true
+
+# Trust mise configs under these paths without the usual confirmation prompt.
+# trusted_config_paths = ["~/code"]
