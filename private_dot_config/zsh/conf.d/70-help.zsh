@@ -1,7 +1,11 @@
 # 70-help.zsh — `help`: list the custom aliases and functions with a short description
 #
 # Descriptions live next to the definitions: put a `#: description` line directly above an alias or function
-# in any conf.d/*.zsh file and it shows up here automatically. Names starting with _ (helpers) are skipped.
+# in any conf.d/*.zsh file and it shows up here automatically.
+#
+# Rule: a name without a leading _ is a command for me and needs a `#:` line; a name starting with _ is an
+# internal helper and is never listed. `help --check` lists public names that lack a `#:` line (exit 1), and
+# plain `help` ends with a warning when there are any, so a new alias or function can't silently stay out.
 # Loaded after the plugins (50) on purpose: zephyr's utility plugin does `alias help=run-help`, which would
 # otherwise win over this function.
 unalias help 2>/dev/null
@@ -16,7 +20,7 @@ help() {
   local -a files; files=($dir/*.zsh(N))
   (( ${#files} )) || { print -u2 "help: no config fragments in $dir"; return 1 }
 
-  local kind name desc active want=${1-} shown=0 last=
+  local kind name desc active want=${1-} shown=0 last= row
   local -a rows
   rows=("${(@f)$(awk '
     /^[[:space:]]*#:/ { d=$0; sub(/^[[:space:]]*#:[[:space:]]*/, "", d); next }
@@ -24,9 +28,28 @@ help() {
       n=""; t=""
       if      (match($0, /^[[:space:]]*alias[[:space:]]+[^=[:space:]]+=/))      { t="alias"; n=$0; sub(/^[[:space:]]*alias[[:space:]]+/, "", n); sub(/=.*/, "", n) }
       else if (match($0, /^[[:space:]]*(function[[:space:]]+)?[A-Za-z0-9_.-]+[[:space:]]*\(\)/)) { t="function"; n=$0; sub(/^[[:space:]]*(function[[:space:]]+)?/, "", n); sub(/[[:space:]]*\(\).*/, "", n) }
-      if (t != "" && d != "" && n !~ /^_/) printf "%s\t%s\t%s\n", t, n, d
+      if (t != "" && n !~ /^_/) {
+        if (d != "") printf "%s\t%s\t%s\n", t, n, d
+        else         printf "missing\t%s\t%s\n", n, FILENAME
+      }
       d=""
     }' $files)}")
+
+  local -a missing=(${(M)rows:#missing$'\t'*})
+  rows=(${rows:#missing$'\t'*})
+
+  if [[ $want == --check ]]; then
+    if (( ${#missing} )); then
+      _drift_header "Without a '#:' description"
+      for row in $missing; do
+        print -r -- "  $(_drift_c yellow)${(r:24:)${${row#*$'\t'}%%$'\t'*}}$(_drift_c reset) ${${row##*$'\t'}:t}"
+      done
+      _drift_note "add a '#: …' line above each, or give internal helpers a leading _ in the name"
+      return 1
+    fi
+    _drift_ok "every alias and function has a description"
+    return 0
+  fi
 
   for kind in alias function; do
     last=
@@ -48,6 +71,10 @@ help() {
     done
   done
   (( shown )) || print -r -- "nothing found${want:+ for '$want'}"
+  if (( ${#missing} )); then
+    print ""
+    print -r -- "$(_drift_c yellow)! ${#missing} without a description (not listed): help --check$(_drift_c reset)"
+  fi
   _drift_note ""
   _drift_note "Add your own: a '#: description' line above an alias or function in $dir/*.zsh"
 }
