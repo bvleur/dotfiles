@@ -36,6 +36,7 @@ brew "lazygit"       # git TUI (invoked directly by LazyVim <leader>gg)
 
 # === GUI apps ===
 cask "ghostty"
+cask "zen"             # Zen browser (Firefox-based)
 cask "zed"
 cask "iina"
 cask "monitorcontrol"
