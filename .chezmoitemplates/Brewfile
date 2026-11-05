@@ -9,6 +9,7 @@ brew "pure"
 # === CLI tools ===
 brew "bat"           # cat replacement (syntax highlight)
 brew "btop"          # resource monitor
+brew "yazi"          # cli file manager
 brew "chezmoi"       # dotfiles management (self-bootstrap)
 brew "fzf"           # fuzzy finder
 brew "httpie"        # HTTP client
@@ -44,6 +45,7 @@ brew "lazygit"       # git TUI (invoked directly by LazyVim <leader>gg)
 #brew "zsh-syntax-highlighting"
 
 # === GUI apps ===
+cask "homebrew-app"
 cask "ghostty"
 cask "zen"             # Zen browser (Firefox-based), the default browser
 cask "google-chrome"   # stable Chrome, only as a test browser (never default, see chrome-defaults script)
@@ -56,6 +58,7 @@ cask "snapzy"
 cask "vicinae"
 cask "rectangle"       # only next/previous display shortcuts, config: .chezmoitemplates/RectangleConfig.json
 cask "ticktick"
+cask "chatgpt"
 
 {{- if eq .purpose "bol" }}
 # === bol only ===
