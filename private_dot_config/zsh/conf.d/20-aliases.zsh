@@ -1,6 +1,6 @@
 # 20-aliases.zsh — aliases
 #
-# Convention (read by `help`, 39-help.zsh): a `#: short description` line directly above an alias or function.
+# Convention (read by `help`, 70-help.zsh): a `#: short description` line directly above an alias or function.
 
 #: open the chezmoi source repo in Zed
 alias dots='zed "$(chezmoi source-path)"'
