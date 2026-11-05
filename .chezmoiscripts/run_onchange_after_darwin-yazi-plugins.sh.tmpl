@@ -1,7 +1,11 @@
 #!/bin/bash
-# Installs the yazi plugins listed in ~/.config/yazi/package.toml (`ya pkg install`).
-# package.toml hash: {{ include "private_dot_config/yazi/package.toml" | sha256sum }}
+# Installs the yazi plugins below with `ya pkg`. The plugin list lives HERE (chezmoi-tracked); ~/.config/yazi/package.toml
+# is owned by `ya` (it writes the pinned rev/hash into it), so it is deliberately NOT managed by chezmoi.
+# Changing the list below re-runs this script. Update plugins later with `ya pkg upgrade`.
 set -eu
+
+PLUGINS="bgreenwell/doxx Lil-Dank/lazygit yazi-rs/plugins:piper"
+# plugins hash: {{ "bgreenwell/doxx Lil-Dank/lazygit yazi-rs/plugins:piper" | sha256sum }}
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
@@ -10,5 +14,13 @@ if ! command -v ya >/dev/null 2>&1; then
   exit 0
 fi
 
+PKG="${XDG_CONFIG_HOME:-$HOME/.config}/yazi/package.toml"
+
 echo "==> Installing yazi plugins"
-ya pkg install
+for p in $PLUGINS; do
+  if ! grep -qs "use = \"$p\"" "$PKG"; then
+    ya pkg add "$p"
+  fi
+done
+# --discard: plugin directories are a cache of upstream, local edits belong in this repo, not in the plugin dir
+ya pkg install --discard
