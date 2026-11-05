@@ -18,6 +18,8 @@ A zsh widget that turns text into a shell command, or modifies an existing comma
   - `claude-cmd-prefs`: edit the preferences, through `chezmoi edit --apply`.
   - `claude-cmd-refresh`: refresh the tool list.
   - `claude-cmd-context`: show the context Claude receives.
+  - `claude-cmd-test [args]`: time one call outside the widget, with stderr visible; extra args are passed on (`--bare`, `--debug`).
+- **Timeout and cancel:** claude runs in the background, the info bar shows the elapsed seconds, a call is killed after `CLAUDE_CMD_TIMEOUT` seconds, and `⌃C` cancels it and restores your text.
 
 ## Decisions
 
@@ -35,6 +37,7 @@ A zsh widget that turns text into a shell command, or modifies an existing comma
 - **Long-form options where possible, never invented.** The macOS base tools are BSD; GNU options only through the `g`-variants when installed.
 - **Info bar through `zle -M`, no Ghostty escape codes.** It works in any terminal. A bar at the very bottom of the window would need scroll-region tricks, which break on resize.
 - **Shortcuts `⌃X e` / `⌃X f` instead of Alt.** `⌥F` is `forward-word` by default, and Alt only works in Ghostty with `macos-option-as-alt`. All keys are configurable.
+- **Calls run in the background with a timeout.** A blocking `$(claude …)` froze the prompt without feedback when a call hung; now there is an elapsed-time counter, a timeout and a working `⌃C`. Chrome integration is switched off (`--no-chrome`) because it only slows the start.
 - **Deliberately left out:**
   - autosuggest while typing (too slow and too expensive through `claude -p`);
   - chat mode;
@@ -59,8 +62,9 @@ The widget does nothing when `claude` isn't on `PATH`, so it is safe on both Mac
 | `CLAUDE_CMD_LANG` | `Dutch` (language of explanations and labels) |
 | `CLAUDE_CMD_KEY_GEN` / `_EXPLAIN` / `_FIX` | `^G` / `^Xe` / `^Xf` |
 | `CLAUDE_CMD_CANDIDATES` | array of individual binaries to check |
+| `CLAUDE_CMD_TIMEOUT` | `30` (seconds) |
+| `CLAUDE_CMD_EXTRA_ARGS` | array of extra `claude` args, e.g. `(--bare)` for a faster start |
 
 ## Known limitations
 
-- `⌃C` while waiting aborts the whole line.
 - If your gateway doesn't know the `haiku` alias, set a full model ID in `CLAUDE_CMD_MODEL`.

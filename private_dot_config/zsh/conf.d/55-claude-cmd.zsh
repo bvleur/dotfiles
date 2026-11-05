@@ -19,6 +19,8 @@
 : ${CLAUDE_CMD_KEY_GEN:='^G'}
 : ${CLAUDE_CMD_KEY_EXPLAIN:='^Xe'}
 : ${CLAUDE_CMD_KEY_FIX:='^Xf'}
+: ${CLAUDE_CMD_TIMEOUT:=30}                 # seconds before a call is killed
+(( ${+CLAUDE_CMD_EXTRA_ARGS} )) || typeset -ga CLAUDE_CMD_EXTRA_ARGS=()  # e.g. (--bare) — see claude-cmd-test
 # Binaries checked individually, next to `brew leaves` (which gives package names, not binaries)
 (( ${+CLAUDE_CMD_CANDIDATES} )) || typeset -ga CLAUDE_CMD_CANDIDATES=(
   rg fd bat eza zoxide fzf jq yq xh httpie sd delta dust duf procs btop hyperfine
@@ -26,7 +28,7 @@
   gsed gdate gfind gxargs gls gtar mise uv node npm pnpm bun python3 go java mvn gradle
 )
 
-zmodload zsh/parameter 2>/dev/null
+zmodload zsh/parameter zsh/datetime zsh/zselect 2>/dev/null
 
 typeset -ga _cc_alts _cc_labels
 typeset -gi _cc_idx=0 _cc_last_status=0
@@ -105,17 +107,53 @@ Maximum 12 lines."
 
 # ── claude ───────────────────────────────────────────────────────────────────
 
-# $1 = system prompt, $2 = user message → stdout; stderr in $CLAUDE_CMD_CACHE/last-error
+_cc_claude_args() {  # $1 = system prompt
+  reply=(
+    -p
+    --model "$CLAUDE_CMD_MODEL"
+    --system-prompt "$1"
+    --tools ""
+    --strict-mcp-config
+    --disable-slash-commands
+    --no-session-persistence
+    --no-chrome
+    $CLAUDE_CMD_EXTRA_ARGS
+  )
+}
+
+# kill the background job's whole process group (claude and its children)
+_cc_kill() {
+  kill -- -$1 2>/dev/null || { pkill -P $1 2>/dev/null; kill $1 2>/dev/null }
+}
+
+# $1 = system prompt, $2 = user message, $3 = what we're doing (for the info bar).
+# Runs claude in the background so the info bar can show elapsed time and a hung call gets killed after
+# $CLAUDE_CMD_TIMEOUT seconds. Result in $_cc_out; stderr in $CLAUDE_CMD_CACHE/last-error.
+# Returns 1 on timeout, 130 when interrupted with ⌃C.
 _cc_call() {
+  emulate -L zsh
+  setopt localtraps
   mkdir -p $CLAUDE_CMD_CACHE
-  print -r -- "$2" | command claude -p \
-    --model "$CLAUDE_CMD_MODEL" \
-    --system-prompt "$1" \
-    --tools "" \
-    --strict-mcp-config \
-    --disable-slash-commands \
-    --no-session-persistence \
-    2>| $CLAUDE_CMD_CACHE/last-error
+  local outf=$CLAUDE_CMD_CACHE/last-output errf=$CLAUDE_CMD_CACHE/last-error pid
+  local -i t0=$EPOCHSECONDS n=0
+  local -a reply; _cc_claude_args "$1"
+  _cc_out=""
+  : >| $outf
+  { print -r -- "$2" | command claude "${reply[@]}" >| $outf 2>| $errf } &!
+  pid=$!
+  trap '_cc_kill $pid; return 130' INT
+  while kill -0 $pid 2>/dev/null; do
+    n=$(( EPOCHSECONDS - t0 ))
+    if (( n >= CLAUDE_CMD_TIMEOUT )); then
+      _cc_kill $pid
+      print -r -- "geen antwoord na ${CLAUDE_CMD_TIMEOUT}s — test buiten zle met: claude-cmd-test" >| $errf
+      return 1
+    fi
+    zle -M "⏳ claude ($CLAUDE_CMD_MODEL) $3… ${n}s   (⌃C annuleert)"
+    zle -R
+    zselect -t 20 2>/dev/null   # 0.2s
+  done
+  _cc_out=$(<$outf)
 }
 
 _cc_error_msg() {
@@ -201,21 +239,20 @@ _cc_show() {
   zle -M "${warn}✦ claude ${_cc_idx}/${#_cc_alts}${label:+ · $label}   │   $(_cc_hints volgende)"
 }
 
-_cc_busy() {
-  zle -M "⏳ claude ($CLAUDE_CMD_MODEL) $1…"
-  zle -R
-}
-
 # ── widgets ──────────────────────────────────────────────────────────────────
 
-_cc_request() {  # $1 = user message
-  local out
-  out=$(_cc_call "$(_cc_sys_commands)" "<context>
+_cc_request() {  # $1 = user message, $2 = what we're doing
+  local orig=$BUFFER
+  _cc_call "$(_cc_sys_commands)" "<context>
 $(_cc_context)
 </context>
 
-$1")
-  _cc_parse "$out"
+$1" "$2"
+  case $? in
+    130) BUFFER=$orig; zle -M "claude: geannuleerd"; return 1 ;;
+    1)   zle -M "$(_cc_error_msg)"; return 1 ;;
+  esac
+  _cc_parse "$_cc_out"
   if (( ! ${#_cc_alts} )); then
     zle -M "$(_cc_error_msg)"
     return 1
@@ -235,9 +272,8 @@ claude-cmd-generate() {
     zle -M "claude: typ eerst wat je wilt doen   │   $(_cc_hints)"
     return
   fi
-  _cc_busy "denkt na"
   _cc_request "Input (natural-language request, an existing command to fix/improve, or a command followed by '# <instruction>' to modify it accordingly):
-$BUFFER"
+$BUFFER" "denkt na"
 }
 
 claude-cmd-explain() {
@@ -247,18 +283,20 @@ claude-cmd-explain() {
     zle -M "claude: niets om uit te leggen"
     return
   fi
-  _cc_busy "legt uit"
-  local out
-  out=$(_cc_call "$(_cc_sys_explain)" "<context>
+  _cc_call "$(_cc_sys_explain)" "<context>
 $(_cc_context)
 </context>
 
 Command:
-$target")
-  if [[ -z ${out//[[:space:]]/} ]]; then
+$target" "legt uit"
+  case $? in
+    130) zle -M "claude: geannuleerd"; return ;;
+    1)   zle -M "$(_cc_error_msg)"; return ;;
+  esac
+  if [[ -z ${_cc_out//[[:space:]]/} ]]; then
     zle -M "$(_cc_error_msg)"
   else
-    zle -M "$out"
+    zle -M "$_cc_out"
   fi
 }
 
@@ -270,11 +308,10 @@ claude-cmd-fix() {
   fi
   local hint=${BUFFER//[[:space:]]/}
   hint=${hint:+$BUFFER}
-  _cc_busy "repareert"
   _cc_request "Fix the previous command so it does what the user intended.
 Previous command (exit status $_cc_last_status):
 $last
-User hint about what went wrong: ${hint:-none}"
+User hint about what went wrong: ${hint:-none}" "repareert"
 }
 
 _cc_precmd() { _cc_last_status=$? }
@@ -305,6 +342,18 @@ claude-cmd-refresh() {
 
 #: show exactly what context claude-cmd sends to Claude
 claude-cmd-context() { _cc_context }
+
+#: time one claude-cmd call outside the widget, with stderr visible (extra args are passed on, e.g. --bare or --debug)
+claude-cmd-test() {
+  emulate -L zsh
+  local -a reply; _cc_claude_args "$(_cc_sys_commands)"
+  print -r -- "claude-cmd-test: model $CLAUDE_CMD_MODEL, cwd $PWD${*:+, extra args: $*}"
+  time ( print -r -- "<context>
+$(_cc_context)
+</context>
+
+Input: list files" | command claude "${reply[@]}" "$@" )
+}
 
 # Refresh the tool list at most once per 24 hours, in the background
 _cc_tools_stale && { _cc_refresh_tools &! } 2>/dev/null
