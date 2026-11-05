@@ -17,6 +17,7 @@ Based on:
 | `private_dot_config/yazi/` | yazi: `.docx` preview ([doxx.yazi](https://github.com/bgreenwell/doxx.yazi)), `.md` preview with glow (piper), `gi` opens lazygit ([lazygit.yazi](https://github.com/Lil-Dank/lazygit.yazi)); plugins (listed in `package.toml`, installed with `ya pkg install` by a chezmoi script; the `doxx` binary comes from the Brewfile) |
 | `.chezmoiscripts/` | Script that automatically runs `brew bundle` on `chezmoi apply` |
 | `.chezmoitemplates/RectangleConfig.json` | Rectangle settings (its export format): only fn⌃⌘← / fn⌃⌘→ (= ⌃⌘Home / ⌃⌘End on a keyboard with those keys) to move a window to the previous / next display, fn⌃⌘↑ / fn⌃⌘↓ to maximize / center, fn⌃⌥⌘↑ / fn⌃⌥⌘↓ to make it larger / smaller — next to macOS' own fn⌃-arrow tiling, all other Rectangle shortcuts and drag-to-snap off. Applied by `run_onchange_after_darwin-rectangle-config.sh`; grant Rectangle Accessibility access once per Mac |
+| `private_dot_config/zsh/conf.d/55-claude-cmd.zsh` + `private_dot_config/claude-cmd/` | claude-cmd: ⌃G turns text into a shell command (or tweaks one with `command # instruction`) via `claude -p` (Haiku), with 3 alternatives to cycle through; ⌃X e explains, ⌃X f fixes the previous command. Preferred tools and option style live in `prefs.md`; features and decisions in its `README.md` |
 
 ### Machine type (`purpose`)
 
@@ -99,6 +100,7 @@ chezmoi apply
 |---|---|
 | `help` | Lists my custom aliases and functions with a description (`help <text>` filters). Descriptions are `#: …` comment lines above each alias / function in `conf.d/*.zsh`, so add one when you add a new alias |
 | `dots` | Opens the chezmoi source directory in Zed |
+| `claude-cmd-prefs` | Edit the claude-cmd preferences (preferred CLI tools, long-form options) through chezmoi |
 | `chezmoi edit <file>` | Edit a dotfile through chezmoi |
 | `chezmoi apply` | Apply changes to the system |
 | `chezmoi diff` | Preview what would change before applying |
