@@ -106,8 +106,7 @@ chezmoi-drift() {
   if [[ -n $dirty ]]; then
     _drift_item '!' "uncommitted changes in $src:"
     print -r -- "$dirty" | while IFS= read -r line; do _drift_note "  $line"; done
-    _drift_fix 'chezmoi git -- add -A && chezmoi git -- commit -m "…"' "commit them"
-    _drift_fix 'lazygit -p "$(chezmoi source-path)"' "or review and commit in lazygit"
+    _drift_fix_commit
   fi
   if [[ $ahead == <-> && $behind == <-> ]] && (( ahead > 0 && behind > 0 )); then
     _drift_item '!' "$ahead commit(s) not pushed and $behind to pull (diverged)"
