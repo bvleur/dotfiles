@@ -22,3 +22,7 @@ if command -v eza >/dev/null 2>&1; then
   #: directory tree with icons
   alias tree='eza --tree --icons'
 fi
+
+# --- git (the rest goes through lazygit) ---
+#: git pull
+alias gl='git pull'
