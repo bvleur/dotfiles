@@ -98,7 +98,7 @@ chezmoi apply
 
 | Command | What it does |
 |---|---|
-| `help` | Lists my custom aliases and functions with a description (`help <text>` filters). Descriptions are `#: …` comment lines above each alias / function in `conf.d/*.zsh`, so add one when you add a new alias |
+| `help` | Lists my custom aliases and functions with a description (`help <text>` filters). Descriptions are `#: …` comment lines above each alias / function in `conf.d/*.zsh`. Internal helpers get a leading `_` and stay hidden; `help --check` lists public names that still lack a description |
 | `dots` | Opens the chezmoi source directory in Zed |
 | `claude-cmd-prefs` | Edit the claude-cmd preferences (preferred CLI tools, long-form options) through chezmoi |
 | `chezmoi edit <file>` | Edit a dotfile through chezmoi |

@@ -224,6 +224,7 @@ $1")
   _cc_show
 }
 
+#: zle widget (^G): turn the typed description into a command, repeat to cycle alternatives
 claude-cmd-generate() {
   # Cycle: the buffer is still exactly the current alternative
   if (( ${#_cc_alts} > 1 && _cc_idx )) && [[ $BUFFER == ${_cc_alts[_cc_idx]} ]]; then
@@ -240,6 +241,7 @@ claude-cmd-generate() {
 $BUFFER"
 }
 
+#: zle widget (^Xe): explain the command on the line, or the previous one
 claude-cmd-explain() {
   local target=$BUFFER
   [[ -z ${target//[[:space:]]/} ]] && target=${history[$(( HISTCMD - 1 ))]}
@@ -262,6 +264,7 @@ $target")
   fi
 }
 
+#: zle widget (^Xf): fix the previous failed command
 claude-cmd-fix() {
   local last=${history[$(( HISTCMD - 1 ))]}
   if [[ -z $last ]]; then
