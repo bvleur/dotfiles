@@ -1,0 +1,33 @@
+# Office documents: previewed by the local plugin plugins/office.yazi (needs libreoffice + poppler, see Brewfile),
+# opened with the default macOS app (Pages/Numbers/Keynote/LibreOffice/Word, whatever is registered).
+
+[plugin]
+prepend_previewers = [
+  { mime = "application/vnd.openxmlformats-officedocument.*", run = "office" },
+  { mime = "application/vnd.oasis.opendocument.*",            run = "office" },
+  { mime = "application/vnd.ms-*",                            run = "office" },
+  { mime = "application/msword",                              run = "office" },
+  { url  = "*.{doc,docx,dot,dotx,xls,xlsx,xlsm,ppt,pptx,pps,ppsx,odt,ods,odp,rtf}", run = "office" },
+]
+
+prepend_preloaders = [
+  { mime = "application/vnd.openxmlformats-officedocument.*", run = "office" },
+  { mime = "application/vnd.oasis.opendocument.*",            run = "office" },
+  { mime = "application/vnd.ms-*",                            run = "office" },
+  { mime = "application/msword",                              run = "office" },
+  { url  = "*.{doc,docx,dot,dotx,xls,xlsx,xlsm,ppt,pptx,pps,ppsx,odt,ods,odp,rtf}", run = "office" },
+]
+
+[opener]
+office = [
+  { run = 'open "$@"', desc = "Open", orphan = true, for = "macos" },
+]
+
+[open]
+prepend_rules = [
+  { mime = "application/vnd.openxmlformats-officedocument.*", use = "office" },
+  { mime = "application/vnd.oasis.opendocument.*",            use = "office" },
+  { mime = "application/vnd.ms-*",                            use = "office" },
+  { mime = "application/msword",                              use = "office" },
+  { url  = "*.{doc,docx,dot,dotx,xls,xlsx,xlsm,ppt,pptx,pps,ppsx,odt,ods,odp,rtf,pages,numbers,key}", use = "office" },
+]
