@@ -1,7 +1,11 @@
-# 39-help.zsh — `help`: list the custom aliases and functions with a short description
+# 70-help.zsh — `help`: list the custom aliases and functions with a short description
 #
 # Descriptions live next to the definitions: put a `#: description` line directly above an alias or function
 # in any conf.d/*.zsh file and it shows up here automatically. Names starting with _ (helpers) are skipped.
+# Loaded after the plugins (50) on purpose: zephyr's utility plugin does `alias help=run-help`, which would
+# otherwise win over this function.
+unalias help 2>/dev/null
+
 # Entries that aren't active in this shell (e.g. an alias whose tool isn't installed) are shown dimmed.
 
 #: list my custom aliases and functions with a description (help <text> filters)
