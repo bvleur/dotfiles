@@ -31,7 +31,7 @@ _brewfile_key() {
   esac
 }
 
-# show drift between system and Brewfile
+#: compare installed Homebrew packages with the Brewfile
 brewfile-drift() {
   emulate -L zsh
   local _DRIFT_TTY; _drift_tty
@@ -110,5 +110,5 @@ brewfile-drift() {
   fi
 }
 
-# open the Brewfile for editing (used when adding drift items)
+#: open the Brewfile in $EDITOR
 brewfile-edit() { ${EDITOR:-nvim} "$(_brewfile_path)"; }
