@@ -1,0 +1,2 @@
+# files that used to be managed; chezmoi apply deletes them from this machine
+.config/zsh/conf.d/39-help.zsh
