@@ -1,66 +1,66 @@
 # claude-cmd
 
-Een zsh-widget die tekst omzet naar een shell-commando, of een bestaand commando aanpast, via de Claude CLI (`claude -p`, standaard Haiku).
+A zsh widget that turns text into a shell command, or modifies an existing command, through the Claude CLI (`claude -p`, Haiku by default).
 
 ## Features
 
-| Toets | Wat |
+| Key | What |
 |---|---|
-| `⌃G` | Genereer 3 alternatieven uit de tekst in de buffer; het beste komt in de buffer. Aanpassen kan met `commando # instructie`. |
-| `⌃G` (nogmaals) | Wissel tussen de 3 alternatieven, lokaal, zonder nieuwe call. |
-| `⌃X e` | Leg het commando in de buffer uit (lege buffer: het vorige commando). Buffer blijft staan. |
-| `⌃X f` | Fix het vorige commando, met exitcode als context. Typ eventueel eerst een hint (bv. de foutmelding). |
-| `⌃_` | Ongedaan maken (standaard zle undo). |
+| `⌃G` | Generate 3 alternatives from the text in the buffer; the best one goes into the buffer. Modify an existing command with `command # instruction`. |
+| `⌃G` (again) | Cycle through the 3 alternatives, locally, without a new call. |
+| `⌃X e` | Explain the command in the buffer (empty buffer: the previous command). The buffer stays as it is. |
+| `⌃X f` | Fix the previous command, with its exit status as context. Optionally type a hint first (e.g. the error message). |
+| `⌃_` | Undo (standard zle undo). |
 
-- **Infobalk:** na elke actie toont `zle -M` onder de prompt de positie (`1/3`), het label van het alternatief en de sneltoetsen.
-- **Waarschuwing:** bij destructieve commando's (`rm`, `--force`, `git reset --hard`, …) toont de infobalk een ⚠-regel.
-- **Hulpcommando's:**
-  - `claude-cmd-prefs`: voorkeuren bewerken, via `chezmoi edit --apply`.
-  - `claude-cmd-refresh`: toollijst verversen.
-  - `claude-cmd-context`: laat zien wat Claude als context krijgt.
+- **Info bar:** after every action, `zle -M` shows the position (`1/3`), the label of the alternative and the shortcuts under the prompt.
+- **Warning:** for destructive commands (`rm`, `--force`, `git reset --hard`, …) the info bar adds a ⚠ line.
+- **Helper commands:**
+  - `claude-cmd-prefs`: edit the preferences, through `chezmoi edit --apply`.
+  - `claude-cmd-refresh`: refresh the tool list.
+  - `claude-cmd-context`: show the context Claude receives.
 
-## Beslissingen
+## Decisions
 
-- **Via `claude -p`, niet via de API.** Zo gaat alles automatisch via de gateway-config van de Claude CLI. Er is geen eigen API-key of endpoint nodig.
-- **Eigen widget in plaats van een bestaande plugin.** De bestaande plugins zijn dunne wrappers. Met een eigen widget zijn we niet afhankelijk van een hobbyproject en kunnen we commando's tweaken, alternatieven tonen en voorkeuren meegeven.
-- **3 alternatieven in één call.** Dat is sneller dan opnieuw vragen, omdat `claude -p` 1–3 seconden opstarttijd heeft. De alternatieven moeten wezenlijk verschillen: een andere tool, een andere aanpak, of een veilige variant.
-- **Nooit automatisch uitvoeren.** Het commando komt altijd in de buffer, en jij drukt zelf op Enter.
+- **Through `claude -p`, not the API.** Everything automatically goes through the Claude CLI's gateway config. No separate API key or endpoint is needed.
+- **Own widget instead of an existing plugin.** The existing plugins are thin wrappers. With our own widget we don't depend on a hobby project, and we can tweak commands, show alternatives and pass preferences.
+- **3 alternatives in one call.** Faster than asking again, because `claude -p` takes 1–3 seconds to start. The alternatives must differ meaningfully: another tool, another approach, or a safe variant.
+- **Never execute automatically.** The command always goes into the buffer, and you press Enter yourself.
 - **Context per call:**
-  - de voorkeuren uit `prefs.md`;
-  - geïnstalleerde tools: `brew leaves`, maximaal 24 uur gecachet en op de achtergrond ververst, plus een vaste kandidatenlijst die tegen `$PATH` wordt gecheckt;
-  - OS, cwd en git-branch.
-  
-  Bewust niet: de volledige inhoud van `$PATH` (te groot), aliases (werken niet buiten je shell) en `--help`-output (te zwaar).
-- **Voorkeuren in een apart bestand, beheerd in chezmoi.** Een toollijst zegt niets over voorkeur, dus `rg` boven `grep` staat expliciet in `prefs.md`. Daar staat ook de regel voor long-form opties.
-- **Long-form opties waar mogelijk, nooit verzonnen.** macOS-basistools zijn BSD; GNU-opties alleen via `g`-varianten als die geïnstalleerd zijn.
-- **Infobalk via `zle -M`, geen Ghostty-escapes.** Dit werkt in elke terminal. Een balk helemaal onderaan het venster zou scroll-region-trucs nodig hebben en dat breekt bij resizen.
-- **Sneltoetsen `⌃X e` / `⌃X f` in plaats van Alt.** `⌥F` is standaard `forward-word`, en Alt werkt in Ghostty alleen met `macos-option-as-alt`. Alle toetsen zijn instelbaar.
-- **Bewust weggelaten:**
-  - autosuggest tijdens het typen (te traag en te duur via `claude -p`);
-  - chatmodus;
-  - output van het vorige commando vastleggen (vereist `script`-wrapping).
+  - the preferences from `prefs.md`;
+  - installed tools: `brew leaves`, cached for at most 24 hours and refreshed in the background, plus a fixed candidate list checked against `$PATH`;
+  - OS, cwd and git branch.
 
-## Waar staat wat
+  Deliberately left out: the full contents of `$PATH` (too large), aliases (they don't work outside your shell) and `--help` output (too heavy).
+- **Preferences in a separate file, managed in chezmoi.** A tool list says nothing about preference, so `rg` over `grep` is stated explicitly in `prefs.md`. The rule for long-form options lives there too.
+- **Long-form options where possible, never invented.** The macOS base tools are BSD; GNU options only through the `g`-variants when installed.
+- **Info bar through `zle -M`, no Ghostty escape codes.** It works in any terminal. A bar at the very bottom of the window would need scroll-region tricks, which break on resize.
+- **Shortcuts `⌃X e` / `⌃X f` instead of Alt.** `⌥F` is `forward-word` by default, and Alt only works in Ghostty with `macos-option-as-alt`. All keys are configurable.
+- **Deliberately left out:**
+  - autosuggest while typing (too slow and too expensive through `claude -p`);
+  - chat mode;
+  - capturing the output of the previous command (requires `script` wrapping).
 
-| Bestand | Inhoud |
+## Where things live
+
+| File | Contents |
 |---|---|
-| `~/.config/zsh/conf.d/55-claude-cmd.zsh` | de widget; geladen na de plugins (50), zodat de sneltoetsen winnen |
-| `~/.config/claude-cmd/prefs.md` | voorkeuren; bewerken met `claude-cmd-prefs` |
-| `~/.config/claude-cmd/README.md` | dit bestand |
-| `~/.cache/claude-cmd/` | gecachte `brew leaves` en de laatste foutmelding |
+| `~/.config/zsh/conf.d/55-claude-cmd.zsh` | the widget; loaded after the plugins (50) so its key bindings win |
+| `~/.config/claude-cmd/prefs.md` | preferences; edit with `claude-cmd-prefs` |
+| `~/.config/claude-cmd/README.md` | this file |
+| `~/.cache/claude-cmd/` | cached `brew leaves` and the last error message |
 
-De widget doet niets als `claude` niet op het `PATH` staat, dus kan veilig op beide MacBooks.
+The widget does nothing when `claude` isn't on `PATH`, so it is safe on both MacBooks.
 
-## Instellingen (zetten vóór 55, bv. in `00-env.zsh`)
+## Settings (set before 55, e.g. in `00-env.zsh`)
 
-| Variabele | Standaard |
+| Variable | Default |
 |---|---|
 | `CLAUDE_CMD_MODEL` | `haiku` |
-| `CLAUDE_CMD_LANG` | `Dutch` (taal van uitleg en labels) |
+| `CLAUDE_CMD_LANG` | `Dutch` (language of explanations and labels) |
 | `CLAUDE_CMD_KEY_GEN` / `_EXPLAIN` / `_FIX` | `^G` / `^Xe` / `^Xf` |
-| `CLAUDE_CMD_CANDIDATES` | array met losse binaries om te checken |
+| `CLAUDE_CMD_CANDIDATES` | array of individual binaries to check |
 
-## Bekende beperkingen
+## Known limitations
 
-- `⌃C` tijdens het wachten breekt de hele regel af.
-- Als je gateway de alias `haiku` niet kent, zet je een volledig model-ID in `CLAUDE_CMD_MODEL`.
+- `⌃C` while waiting aborts the whole line.
+- If your gateway doesn't know the `haiku` alias, set a full model ID in `CLAUDE_CMD_MODEL`.
