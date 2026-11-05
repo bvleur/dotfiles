@@ -14,6 +14,7 @@ Based on:
 |---|---|
 | `private_dot_config/zsh/` | Zsh configuration, split into `conf.d/` fragments |
 | `.chezmoitemplates/Brewfile` | Homebrew package list, installed via `brew bundle` |
+| `private_dot_config/yazi/` | yazi: `.docx` preview via the [doxx.yazi](https://github.com/bgreenwell/doxx.yazi) plugin (listed in `package.toml`, installed with `ya pkg install` by a chezmoi script; the `doxx` binary comes from the Brewfile) |
 | `.chezmoiscripts/` | Script that automatically runs `brew bundle` on `chezmoi apply` |
 | `.chezmoitemplates/RectangleConfig.json` | Rectangle settings (its export format): only fn⌃⌘← / fn⌃⌘→ (= ⌃⌘Home / ⌃⌘End on a keyboard with those keys) to move a window to the previous / next display, fn⌃⌘↑ / fn⌃⌘↓ to maximize / center, fn⌃⌥⌘↑ / fn⌃⌥⌘↓ to make it larger / smaller — next to macOS' own fn⌃-arrow tiling, all other Rectangle shortcuts and drag-to-snap off. Applied by `run_onchange_after_darwin-rectangle-config.sh`; grant Rectangle Accessibility access once per Mac |
 

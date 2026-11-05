@@ -16,6 +16,8 @@ brew "mas"           # Mac App Store CLI (used by the mas entries below)
 brew "mise"          # dev-tool version manager (owns node/java/python/...)
 brew "neovim"        # editor
 brew "tlrc"          # tldr client
+brew "yazi"          # terminal file manager (`y`), config: ~/.config/yazi
+brew "doxx"          # .docx viewer, used by the doxx yazi plugin
 brew "zoxide"        # smart cd
 cask "1password-cli"
 

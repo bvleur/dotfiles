@@ -1,0 +1,5 @@
+[plugin]
+prepend_previewers = [
+  { mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document", run = "doxx" },
+  { url = "*.docx", run = "doxx" },
+]
