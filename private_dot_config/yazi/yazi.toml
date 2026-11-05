@@ -8,7 +8,8 @@ prepend_previewers = [
 # Text-ish files open in Zed (default for interactive open); nvim stays available via the open menu (`O`).
 [opener]
 zed = [
-  { run = 'zed "$@"', desc = "Zed", orphan = true, for = "unix" },
+  # `open -a` instead of the `zed` CLI: the CLI treats the detached/non-tty stdin yazi gives it as content and opens an empty buffer
+  { run = 'open -a Zed "$@"', desc = "Zed", orphan = true, for = "macos" },
 ]
 edit = [
   { run = '${EDITOR:-nvim} "$@"', desc = "$EDITOR", block = true, for = "unix" },
