@@ -24,6 +24,7 @@ _chezmoi_drift_is_template() {
   [[ $srcfile == *.tmpl ]]
 }
 
+#: everything that differs between this laptop and the dotfiles repo, with fix commands
 chezmoi-drift() {
   emulate -L zsh
   local _DRIFT_TTY; _drift_tty

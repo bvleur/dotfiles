@@ -34,6 +34,7 @@ _vicinae_drift_fixes() {
   _drift_fix "chezmoi apply --force ~/.config/vicinae/settings.json" "or discard it: back to the template"
 }
 
+#: Vicinae app shortcuts: this laptop vs the chezmoi template
 vicinae-shortcuts-drift() {
   emulate -L zsh
   local _DRIFT_TTY; _drift_tty
@@ -60,6 +61,7 @@ vicinae-shortcuts-drift() {
   fi
 }
 
+#: other Vicinae settings: this laptop vs the chezmoi template
 vicinae-settings-drift() {
   emulate -L zsh
   local _DRIFT_TTY; _drift_tty
