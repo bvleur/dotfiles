@@ -23,32 +23,6 @@ if command -v eza >/dev/null 2>&1; then
   alias tree='eza --tree --icons'
 fi
 
-# --- git (a small subset, same names as the Oh My Zsh git plugin) ---
-#: git
-alias g='git'
-#: git status
-alias gst='git status'
-#: git add --all
-alias gaa='git add --all'
-#: git commit --message
-alias gcmsg='git commit --message'
-#: git commit --all --message
-alias gcam='git commit --all --message'
-#: git diff
-alias gd='git diff'
-#: git switch
-alias gsw='git switch'
-#: git branch
-alias gb='git branch'
+# --- git (the rest goes through lazygit) ---
 #: git pull
 alias gl='git pull'
-#: git pull --rebase
-alias gpr='git pull --rebase'
-#: git push
-alias gp='git push'
-#: git push --force-with-lease (safe force push)
-alias gpf='git push --force-with-lease'
-#: git push and set upstream to origin/<current branch>
-alias gpsup='git push --set-upstream origin HEAD'
-#: git log, one line per commit with graph
-alias glog='git log --oneline --decorate --graph'
