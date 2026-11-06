@@ -1,0 +1,16 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# Menubar clock: hide date and weekday (Itsycal shows the date); time stays
+# (macOS cannot hide the clock entirely). Per-user prefs, no admin rights needed.
+# hash: {{ include ".chezmoiscripts/run_onchange_after_darwin-menubar-clock.sh.tmpl" | sha256sum }}
+set -eu
+
+# ShowDate: 0 = when space allows, 1 = always, 2 = never
+defaults write com.apple.menuextra.clock ShowDate      -int 2
+defaults write com.apple.menuextra.clock ShowDayOfWeek -bool false
+
+# Apply immediately: ControlCenter hosts the clock on macOS 11+,
+# SystemUIServer on older versions. Both respawn automatically.
+killall ControlCenter   2>/dev/null || true
+killall SystemUIServer  2>/dev/null || true
+{{- end }}
