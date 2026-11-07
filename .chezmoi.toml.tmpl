@@ -1,0 +1,5 @@
+{{- /* Asked once by `chezmoi init`; the answer is kept in ~/.config/chezmoi/chezmoi.toml. */ -}}
+{{- $purpose := promptChoiceOnce . "purpose" "What type of machine is this" (list "home" "bol") -}}
+
+[data]
+    purpose = {{ $purpose | quote }}
