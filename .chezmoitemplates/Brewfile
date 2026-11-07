@@ -62,6 +62,11 @@ cask "gcloud-cli"
 cask "jetbrains-toolbox"
 {{- end }}
 
+{{- if eq .purpose "home" }}
+# === home only ===
+cask "claude-code"   # Claude Code CLI
+{{- end }}
+
 
 # === Mac App Store ===
 # Log in to the App Store first; installs apps associated with your Apple ID.
