@@ -9,7 +9,24 @@ fi
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # --- Install per Brewfile (content inlined, editing Brewfile triggers rerun) ---
+# A failing package must not break `chezmoi apply`/`update`: capture the exit code, print a summary, always exit 0.
+# Note: after exit 0 chezmoi treats this run_onchange script as done and only reruns it when the Brewfile changes,
+# so a failed package has to be retried by hand with the command printed below.
 echo "==> brew bundle syncing packages..."
-brew bundle install --file=/dev/stdin <<'BREWFILE'
+log=$(mktemp)
+trap 'rm -f "$log"' EXIT
+set +e
+brew bundle install --file=/dev/stdin 2>&1 <<'BREWFILE' | tee "$log"
 {{ includeTemplate "Brewfile" . }}
 BREWFILE
+status=${PIPESTATUS[0]}
+set -e
+
+if [ "$status" -ne 0 ]; then
+  echo ""
+  echo "!! brew bundle exited with status $status; some packages failed (the rest was installed)."
+  grep -iE "failed|error" "$log" | sed 's/^/!!   /' || true
+  echo "!! Retry later with:"
+  echo '!!   chezmoi execute-template < "$(chezmoi source-path)/.chezmoitemplates/Brewfile" | brew bundle install --file=-'
+fi
+exit 0
