@@ -1,6 +1,6 @@
-fpath+=("$(brew --prefix)/share/zsh/site-functions")
+fpath+=("$HOMEBREW_PREFIX/share/zsh/site-functions")
 
-source /opt/homebrew/opt/antidote/share/antidote/antidote.zsh
+source "$HOMEBREW_PREFIX/opt/antidote/share/antidote/antidote.zsh"
 antidote load
 
 eval "$(zoxide init zsh)"

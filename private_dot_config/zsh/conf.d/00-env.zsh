@@ -5,7 +5,11 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 
 # --- completion paths (cross-platform, must apply before compinit (10)) ---
-[[ -d /opt/homebrew/share/zsh/site-functions ]]  && FPATH=/opt/homebrew/share/zsh/site-functions:$FPATH
+# Homebrew prefix: Apple Silicon /opt/homebrew, Intel /usr/local (unless brew shellenv already set it)
+if [[ -z ${HOMEBREW_PREFIX-} ]]; then
+  [[ -d /opt/homebrew ]] && HOMEBREW_PREFIX=/opt/homebrew || HOMEBREW_PREFIX=/usr/local
+fi
+[[ -d $HOMEBREW_PREFIX/share/zsh/site-functions ]] && FPATH=$HOMEBREW_PREFIX/share/zsh/site-functions:$FPATH
 
 # --- editor ---
 export EDITOR=nvim
