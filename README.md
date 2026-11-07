@@ -21,7 +21,7 @@ Based on:
 
 ### Machine type (`purpose`)
 
-Some configuration is machine-specific, controlled by the `purpose` variable in `~/.config/chezmoi/chezmoi.toml` (a local file, **not** committed to the repo).
+Some configuration is machine-specific, controlled by the `purpose` variable. `chezmoi init` asks for it once (via [`.chezmoi.toml.tmpl`](.chezmoi.toml.tmpl)) and stores the answer in `~/.config/chezmoi/chezmoi.toml` (a local file, **not** committed to the repo).
 
 | Value | Use |
 |---|---|
@@ -41,9 +41,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/bvleur/dotfiles/main/install
 The script will:
 1. Install Homebrew if not already present
 2. Install chezmoi via Homebrew
-3. Ask whether this is a `home` or `bol` machine
-4. Write `~/.config/chezmoi/chezmoi.toml` accordingly
-5. Run `chezmoi init` and `chezmoi apply`
+3. Run `chezmoi init --apply`, which asks whether this is a `home` or `bol` machine
 
 > **Note:** For `purpose = "bol"`, the private Homebrew tap (`gitlab.bol.io`) must be reachable. Make sure your SSH key for GitLab is set up, or skip the tap and add it manually later.
 
@@ -62,33 +60,12 @@ The script will:
 brew install chezmoi
 ```
 
-**3. Set the machine type** — create `~/.config/chezmoi/chezmoi.toml` before applying:
-
-Personal laptop:
+**3. Initialize and apply** (chezmoi asks for the machine type, `home` or `bol`):
 ```bash
-mkdir -p ~/.config/chezmoi
-cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
-[data]
-  purpose = "home"
-EOF
+chezmoi init --apply https://github.com/bvleur/dotfiles.git
 ```
 
-Work laptop (bol):
-```bash
-mkdir -p ~/.config/chezmoi
-cat > ~/.config/chezmoi/chezmoi.toml << 'EOF'
-[data]
-  purpose = "bol"
-EOF
-```
-
-**4. Initialize and apply:**
-```bash
-chezmoi init https://github.com/bvleur/dotfiles.git
-chezmoi apply
-```
-
-**5.** Sign in to the App Store and install `mas` apps if needed (requires Apple ID).
+**4.** Sign in to the App Store and install `mas` apps if needed (requires Apple ID).
 
 </details>
 
