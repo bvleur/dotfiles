@@ -1,7 +1,5 @@
 #!/bin/bash
 # Rectangle preferences, from .chezmoitemplates/RectangleConfig.json (Rectangle's own export format).
-# config hash: {{ includeTemplate "RectangleConfig.json" . | sha256sum }}
-# script hash: {{ include ".chezmoiscripts/run_onchange_after_darwin-rectangle-config.sh.tmpl" | sha256sum }}
 #
 # Why `defaults` instead of Rectangle's own auto-import (~/Library/Application Support/Rectangle/RectangleConfig.json):
 # - the import resets every shortcut missing from the file back to Rectangle's built-in defaults, so a config with

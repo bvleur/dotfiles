@@ -5,9 +5,12 @@
 set -eu
 
 PLUGINS="bgreenwell/doxx Lil-Dank/lazygit yazi-rs/plugins:piper"
-# plugins hash: {{ "bgreenwell/doxx Lil-Dank/lazygit yazi-rs/plugins:piper" | sha256sum }}
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
+if ! command -v brew >/dev/null 2>&1; then
+  for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+    if [ -x "$b" ]; then eval "$("$b" shellenv)"; break; fi
+  done
+fi
 
 if ! command -v ya >/dev/null 2>&1; then
   echo "==> yazi (ya) not installed, skipping plugin install"

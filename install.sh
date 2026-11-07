@@ -4,16 +4,17 @@ set -euo pipefail
 # Bootstrap script for bvleur/dotfiles
 # Usage: bash <(curl -fsSL https://raw.githubusercontent.com/bvleur/dotfiles/main/install.sh)
 
-# --- Install Homebrew if missing ---
+# --- Find Homebrew (not installed here: it needs admin rights, or a self-service portal on a managed Mac) ---
 if ! command -v brew >/dev/null 2>&1; then
-  echo "==> Homebrew not found, installing..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  # Add brew to PATH for the rest of this script
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-else
-  echo "==> Homebrew already installed, skipping."
-  eval "$(brew shellenv)"
+  for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+    if [ -x "$b" ]; then eval "$("$b" shellenv)"; break; fi
+  done
 fi
+if ! command -v brew >/dev/null 2>&1; then
+  echo "Homebrew not found. Install it first (https://brew.sh, or your self-service portal), then run this script again." >&2
+  exit 1
+fi
+echo "==> Homebrew found: $(command -v brew)"
 
 # --- Install chezmoi via Homebrew ---
 if ! command -v chezmoi >/dev/null 2>&1; then
