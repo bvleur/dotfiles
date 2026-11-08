@@ -1,12 +1,16 @@
 #!/bin/bash
 set -eu
 
-# --- Ensure Homebrew exists ---
+# --- Ensure Homebrew exists (not installed here: it needs admin rights, or a self-service portal on a managed Mac) ---
 if ! command -v brew >/dev/null 2>&1; then
-  echo "==> Homebrew not detected, installing..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  for b in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+    if [ -x "$b" ]; then eval "$("$b" shellenv)"; break; fi
+  done
 fi
-eval "$(/opt/homebrew/bin/brew shellenv)"
+if ! command -v brew >/dev/null 2>&1; then
+  echo "✗ Homebrew not found. Install it first (https://brew.sh, or your self-service portal), then run: chezmoi apply" >&2
+  exit 1
+fi
 
 # --- Install per Brewfile (content inlined, editing Brewfile triggers rerun) ---
 # A failing package must not break `chezmoi apply`/`update`: capture the exit code, print a summary, always exit 0.
