@@ -1,0 +1,7 @@
+{{- /* Vicinae extension, built and released from https://github.com/bvleur/vicinae-toggle-system-appearance.
+       Bump the tag to update; the vicinae-reload script hashes this file so Vicinae restarts on a new tag. */ -}}
+{{ if eq .chezmoi.os "darwin" -}}
+[".local/share/vicinae/extensions/toggle-system-appearance"]
+    type = "archive"
+    url = "https://github.com/bvleur/vicinae-toggle-system-appearance/releases/download/v1.0.0/toggle-system-appearance.tar.gz"
+{{- end }}
