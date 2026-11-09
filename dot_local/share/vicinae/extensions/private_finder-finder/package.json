@@ -1,7 +1,7 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "finder-finder",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "title": "Finder Finder",
   "description": "Jump to Finder instantly, or pick from your open Finder windows.",
   "categories": [
@@ -35,6 +35,15 @@
       "description": "Skip the direct-focus shortcut and always list Finder windows.",
       "required": false,
       "default": false
+    },
+    {
+      "name": "keepFocus",
+      "type": "checkbox",
+      "label": "Re-activate Finder if focus is taken back",
+      "title": "Focus",
+      "description": "Right after the launcher closes, macOS/Vicinae may hand focus back to the previous app. When on, Finder is re-activated if that happens (for at most 0.8 s). A deliberate switch to another app is never overridden. Turn off if Finder grabs focus again after you switch away.",
+      "required": false,
+      "default": true
     }
   ],
   "dependencies": {
