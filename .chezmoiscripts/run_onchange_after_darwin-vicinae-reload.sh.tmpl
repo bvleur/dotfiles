@@ -4,6 +4,9 @@ set -eu
 # Vicinae only scans its extensions folder at startup. Restart it when a tracked extension changes.
 # extension hash: {{ include "dot_local/share/vicinae/extensions/private_toggle-system-appearance/toggle-system-appearance.js" | sha256sum }}
 # manifest hash:  {{ include "dot_local/share/vicinae/extensions/private_toggle-system-appearance/package.json" | sha256sum }}
+# finder-finder:  {{ include "dot_local/share/vicinae/extensions/private_finder-finder/package.json" | sha256sum }}
+#                 {{ include "dot_local/share/vicinae/extensions/private_finder-finder/finder-finder.js" | sha256sum }}
+#                 {{ include "dot_local/share/vicinae/extensions/private_finder-finder/finder-windows.js" | sha256sum }}
 
 if pgrep -x Vicinae >/dev/null 2>&1; then
   echo "==> Restarting Vicinae to load extension changes..."

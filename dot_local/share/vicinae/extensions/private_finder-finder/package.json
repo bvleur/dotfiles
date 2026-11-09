@@ -1,0 +1,52 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "finder-finder",
+  "version": "0.1.0",
+  "title": "Finder Finder",
+  "description": "Jump to Finder instantly, or pick from your open Finder windows.",
+  "categories": [
+    "System"
+  ],
+  "license": "MIT",
+  "author": "bvleur",
+  "icon": "extension_icon.png",
+  "commands": [
+    {
+      "name": "finder-finder",
+      "title": "FinderFinder",
+      "subtitle": "Finder",
+      "description": "Focus Finder at once (centred window if none is open); with several windows, pick one.",
+      "mode": "no-view"
+    },
+    {
+      "name": "finder-windows",
+      "title": "Finder Windows",
+      "subtitle": "Finder",
+      "description": "Focus Finder directly when there is nothing to choose, otherwise list the open Finder windows.",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "alwaysShowList",
+      "type": "checkbox",
+      "label": "Always show the window list",
+      "title": "Window list",
+      "description": "Skip the direct-focus shortcut and always list Finder windows.",
+      "required": false,
+      "default": false
+    }
+  ],
+  "dependencies": {
+    "@vicinae/api": "^0.29.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "19.1.17",
+    "typescript": "5.9.2"
+  },
+  "scripts": {
+    "build": "vici build",
+    "dev": "vici develop"
+  }
+}
