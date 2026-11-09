@@ -1,4 +1,4 @@
-"use strict";var u=Object.defineProperty;var A=Object.getOwnPropertyDescriptor;var x=Object.getOwnPropertyNames;var S=Object.prototype.hasOwnProperty;var k=(o,e)=>{for(var i in e)u(o,i,{get:e[i],enumerable:!0})},L=(o,e,i,s)=>{if(e&&typeof e=="object"||typeof e=="function")for(let a of x(e))!S.call(o,a)&&a!==i&&u(o,a,{get:()=>e[a],enumerable:!(s=A(e,a))||s.enumerable});return o};var I=o=>L(u({},"__esModule",{value:!0}),o);var V={};k(V,{default:()=>g});module.exports=I(V);var t=require("@vicinae/api"),w=require("react");var p=require("node:child_process"),h=require("node:util"),m=(0,h.promisify)(p.execFile);async function l(o){let{stdout:e}=await m("osascript",["-e",o]);return e.trim()}var E=`
+"use strict";var m=Object.defineProperty;var k=Object.getOwnPropertyDescriptor;var x=Object.getOwnPropertyNames;var L=Object.prototype.hasOwnProperty;var D=(o,e)=>{for(var n in e)m(o,n,{get:e[n],enumerable:!0})},M=(o,e,n,r)=>{if(e&&typeof e=="object"||typeof e=="function")for(let i of x(e))!L.call(o,i)&&i!==n&&m(o,i,{get:()=>e[i],enumerable:!(r=k(e,i))||r.enumerable});return o};var E=o=>M(m({},"__esModule",{value:!0}),o);var N={};D(N,{default:()=>W});module.exports=E(N);var t=require("@vicinae/api"),u=require("react");var y=require("@vicinae/api"),b=require("node:child_process"),F=require("node:util"),p=(0,F.promisify)(b.execFile);async function c(o){let{stdout:e}=await p("osascript",["-e",o]);return e.trim()}var I=`
 tell application "Finder"
   set out to ""
   repeat with i from 1 to (count of windows)
@@ -11,8 +11,8 @@ tell application "Finder"
   end repeat
   return out
 end tell
-`;async function y(){return(await l(E)).split(`
-`).filter(Boolean).map(e=>{let[i,s,a]=e.split("	");return{id:Number(i),name:s,path:a??""}})}var C="com.apple.finder";async function M(){try{let{stdout:o}=await m("lsappinfo",["front"]),{stdout:e}=await m("lsappinfo",["info","-only","bundleid",o.trim()]);return e.includes(C)}catch{return!0}}async function d(o){await o();for(let e=0;e<10;e++)await new Promise(i=>setTimeout(i,120)),await M()||await l('tell application "Finder" to activate')}async function f(){await l(`
+`;async function g(){return(await c(I)).split(`
+`).filter(Boolean).map(e=>{let[n,r,i]=e.split("	");return{id:Number(n),name:r,path:i??""}})}var _="com.apple.finder";async function v(){try{let{stdout:o}=await p("lsappinfo",["front"]),{stdout:e}=await p("lsappinfo",["info","-only","bundleid",o.trim()]);return e.match(/"([^"]+)"\s*$/)?.[1]??e.trim()}catch{return""}}var C=v(),V=Number(process.env.FF_GUARD_MAX_MS??800);async function d(o){let{keepFocus:e}=(0,y.getPreferenceValues)(),n=e===!1?"":await C;if(n.toLowerCase().includes("vicinae")&&(n=""),await o(),e===!1)return;let r=Date.now(),i=null;for(;Date.now()-r<V;){await new Promise(f=>setTimeout(f,60));let l=await v();if(l===_){if(i??=Date.now(),Date.now()-i>=300)return}else if(n===""||l===n||l==="")i=null,await c('tell application "Finder" to activate');else return}}async function h(){await c(`
     tell application "Finder"
       if (count of windows) is 0 then
         set b to bounds of window of desktop
@@ -27,14 +27,14 @@ end tell
       end if
       activate
     end tell
-  `)}async function b(o){await l(`
+  `)}async function P(o){await c(`
     tell application "Finder"
       set w to window id ${Math.trunc(o)}
       if collapsed of w then set collapsed of w to false
       set index of w to 1
       activate
     end tell
-  `)}async function F(){await l(`
+  `)}async function A(){await c(`
     tell application "Finder" to activate
     tell application "System Events"
       tell process "Finder"
@@ -54,4 +54,4 @@ end tell
         click mi
       end tell
     end tell
-  `)}function c(o){let e=o instanceof Error?o.message:String(o);return e.includes("-1743")?"Allow Vicinae to control Finder in Privacy & Security > Automation":e.includes("-1719")||e.includes("-25211")?"Allow Vicinae in Privacy & Security > Accessibility":"Could not talk to Finder"}var r=require("react/jsx-runtime");function g(o){let{alwaysShowList:e}=(0,t.getPreferenceValues)(),i=o.launchContext?.windows,[s,a]=(0,w.useState)(()=>{try{return typeof i=="string"?JSON.parse(i):null}catch{return null}}),P=async()=>{await(0,t.closeMainWindow)();try{await F()}catch(n){await(0,t.showHUD)(c(n))}};(0,w.useEffect)(()=>{s===null&&(async()=>{try{let n=await y();if(!e&&n.length<=1){await(0,t.closeMainWindow)(),await d(f);return}a(n)}catch(n){await(0,t.closeMainWindow)(),await(0,t.showHUD)(c(n))}})()},[]);let v=async n=>{await(0,t.closeMainWindow)();try{await d(()=>b(n.id))}catch(W){await(0,t.showHUD)(c(W))}};return(0,r.jsxs)(t.List,{isLoading:s===null,searchBarPlaceholder:"Filter Finder windows\u2026",children:[(s??[]).map(n=>(0,r.jsx)(t.List.Item,{title:n.name,subtitle:n.path.replace(/^\/Users\/[^/]+/,"~"),icon:t.Icon.Folder,actions:(0,r.jsxs)(t.ActionPanel,{children:[(0,r.jsx)(t.Action,{title:"Focus Window",onAction:()=>v(n)}),(0,r.jsx)(t.Action,{title:"Focus Finder",onAction:async()=>{await(0,t.closeMainWindow)(),await d(f)}})]})},n.id)),s&&s.length>1&&(0,r.jsx)(t.List.Item,{title:"Merge all windows into one",icon:t.Icon.Layers,actions:(0,r.jsx)(t.ActionPanel,{children:(0,r.jsx)(t.Action,{title:"Merge All Windows",onAction:P})})},"merge")]})}
+  `)}function w(o){let e=o instanceof Error?o.message:String(o);return e.includes("-1743")?"Allow Vicinae to control Finder in Privacy & Security > Automation":e.includes("-1719")||e.includes("-25211")?"Allow Vicinae in Privacy & Security > Accessibility":"Could not talk to Finder"}var a=require("react/jsx-runtime");function W(o){let{alwaysShowList:e}=(0,t.getPreferenceValues)(),n=o.launchContext?.windows,[r,i]=(0,u.useState)(()=>{try{return typeof n=="string"?JSON.parse(n):null}catch{return null}}),l=async()=>{await(0,t.closeMainWindow)();try{await A()}catch(s){await(0,t.showHUD)(w(s))}};(0,u.useEffect)(()=>{r===null&&(async()=>{try{let s=await g();if(!e&&s.length<=1){await(0,t.closeMainWindow)(),await d(h);return}i(s)}catch(s){await(0,t.closeMainWindow)(),await(0,t.showHUD)(w(s))}})()},[]);let f=async s=>{await(0,t.closeMainWindow)();try{await d(()=>P(s.id))}catch(S){await(0,t.showHUD)(w(S))}};return(0,a.jsxs)(t.List,{isLoading:r===null,searchBarPlaceholder:"Filter Finder windows\u2026",children:[(r??[]).map(s=>(0,a.jsx)(t.List.Item,{title:s.name,subtitle:s.path.replace(/^\/Users\/[^/]+/,"~"),icon:t.Icon.Folder,actions:(0,a.jsxs)(t.ActionPanel,{children:[(0,a.jsx)(t.Action,{title:"Focus Window",onAction:()=>f(s)}),(0,a.jsx)(t.Action,{title:"Focus Finder",onAction:async()=>{await(0,t.closeMainWindow)(),await d(h)}})]})},s.id)),r&&r.length>1&&(0,a.jsx)(t.List.Item,{title:"Merge all windows into one",icon:t.Icon.Layers,actions:(0,a.jsx)(t.ActionPanel,{children:(0,a.jsx)(t.Action,{title:"Merge All Windows",onAction:l})})},"merge")]})}
