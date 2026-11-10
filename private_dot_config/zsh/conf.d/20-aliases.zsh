@@ -23,6 +23,9 @@ if command -v eza >/dev/null 2>&1; then
   alias tree='eza --tree --icons'
 fi
 
+#: watch, via viddy (history, pause, diff highlighting)
+command -v viddy >/dev/null 2>&1 && alias watch='viddy'
+
 # --- git (the rest goes through lazygit) ---
 #: git pull
 alias gl='git pull'
