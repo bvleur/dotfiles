@@ -16,6 +16,7 @@ brew "mas"           # Mac App Store CLI (used by the mas entries below)
 brew "mise"          # dev-tool version manager (owns node/java/python/...)
 brew "neovim"        # editor
 brew "tlrc"          # tldr client
+brew "viddy"         # modern watch replacement (aliased to `watch`)
 brew "yazi"          # terminal file manager (`y`), config: ~/.config/yazi
 brew "glow"          # markdown renderer, used for .md previews in yazi
 brew "doxx"          # .docx viewer, used by the doxx yazi plugin
