@@ -20,6 +20,8 @@ brew "viddy"         # modern watch replacement (aliased to `watch`)
 brew "yazi"          # terminal file manager (`y`), config: ~/.config/yazi
 brew "glow"          # markdown renderer, used for .md previews in yazi
 brew "doxx"          # .docx viewer, used by the doxx yazi plugin
+brew "hexyl"         # hex viewer, used by `v` for binary files
+brew "csvlens"       # interactive CSV viewer, used by `v` for .csv/.tsv
 brew "zoxide"        # smart cd
 cask "1password-cli"
 
