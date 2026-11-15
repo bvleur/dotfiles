@@ -9,3 +9,30 @@ y() {
   [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
   rm -f -- "$tmp"
 }
+
+#: view files with the best viewer per type (md: glow, docx: doxx, json: jless, csv: csvlens, binary: hexyl, dirs: eza), bat as fallback
+v() {
+  emulate -L zsh
+  (( $# )) || { print -u2 "usage: v <file>..."; return 1 }
+  local f rc=0
+  for f in "$@"; do
+    if [[ -d $f ]]; then
+      if (( $+commands[eza] )); then command eza -l --icons --git -- "$f"; else command ls -l -- "$f"; fi
+    elif [[ $f == (#i)*.(md|markdown) ]] && (( $+commands[glow] )); then
+      command glow -p -s dark -- "$f"      # same renderer as the yazi .md preview
+    elif [[ $f == (#i)*.docx ]] && (( $+commands[doxx] )); then
+      command doxx "$f"                    # same viewer as the yazi .docx preview
+    elif [[ $f == (#i)*.json ]] && (( $+commands[jless] )); then
+      command jless -- "$f"
+    elif [[ $f == (#i)*.(csv|tsv) ]] && (( $+commands[csvlens] )); then
+      if [[ $f == (#i)*.tsv ]]; then command csvlens -d '\t' -- "$f"; else command csvlens -- "$f"; fi
+    elif [[ -f $f ]] && (( $+commands[hexyl] )) && [[ $(command file --brief --mime-encoding -- "$f") == binary ]]; then
+      command hexyl -- "$f" | command less -R
+    elif (( $+commands[bat] )); then
+      command bat -- "$f"
+    else
+      command ${PAGER:-less} -- "$f"
+    fi || rc=1
+  done
+  return $rc
+}
