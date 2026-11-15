@@ -19,7 +19,9 @@ v() {
     if [[ -d $f ]]; then
       if (( $+commands[eza] )); then command eza -l --icons --git -- "$f"; else command ls -l -- "$f"; fi
     elif [[ $f == (#i)*.(md|markdown) ]] && (( $+commands[glow] )); then
-      command glow -p -s dark -- "$f"      # same renderer as the yazi .md preview
+      # Same invocation as the yazi piper previewer (forced colour, explicit width, dark style). glow's built-in
+      # pager (-p) draws tables differently, so page the output with less instead.
+      CLICOLOR_FORCE=1 command glow -w=${COLUMNS:-80} -s=dark "$f" | command less -R
     elif [[ $f == (#i)*.docx ]] && (( $+commands[doxx] )); then
       command doxx "$f"                    # same viewer as the yazi .docx preview
     elif [[ $f == (#i)*.json ]] && (( $+commands[jless] )); then
