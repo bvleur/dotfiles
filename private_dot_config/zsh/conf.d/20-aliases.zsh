@@ -29,3 +29,6 @@ command -v viddy >/dev/null 2>&1 && alias watch='viddy'
 # --- git (the rest goes through lazygit) ---
 #: git pull
 alias gl='git pull'
+
+#: lazygit (git TUI)
+command -v lazygit >/dev/null 2>&1 && alias lg='lazygit'
