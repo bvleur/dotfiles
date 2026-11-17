@@ -6,8 +6,11 @@
 # is left alone. Restart Snapzy afterwards, it only reads these at launch.
 set -eu
 
+# Resolve the bundle id from the installed app; skip quietly if Snapzy is not installed (yet).
+bundle_id=$(osascript -e 'id of app "Snapzy"' 2>/dev/null) || { echo "Snapzy not installed, skipping shortcuts"; exit 0; }
+
 snapzy_shortcut() { # <defaults key> <keyCode> <modifiers>
-  defaults write app.snapzy.Snapzy "$1" -data "$(printf '{"keyCode":%s,"modifiers":%s}' "$2" "$3" | xxd -p | tr -d '\n')"
+  defaults write "$bundle_id" "$1" -data "$(printf '{"keyCode":%s,"modifiers":%s}' "$2" "$3" | xxd -p | tr -d '\n')"
 }
 
 snapzy_shortcut historyShortcut 29 768  # cmd+shift+0
