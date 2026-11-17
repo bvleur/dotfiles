@@ -17,7 +17,7 @@ Based on:
 | `private_dot_config/yazi/` | yazi: `.docx` preview ([doxx.yazi](https://github.com/bgreenwell/doxx.yazi)), `.md` preview with glow (piper), `gi` opens lazygit, text files open in Zed ([lazygit.yazi](https://github.com/Lil-Dank/lazygit.yazi)); plugins (list in the `run_onchange_after_darwin-yazi-plugins` chezmoi script, which runs `ya pkg add`/`install`; the `doxx` binary comes from the Brewfile) |
 | `.chezmoiscripts/` | Script that automatically runs `brew bundle` on `chezmoi apply` |
 | `.chezmoitemplates/RectangleConfig.json` | Rectangle settings (its export format): only fn⌃⌘← / fn⌃⌘→ (= ⌃⌘Home / ⌃⌘End on a keyboard with those keys) to move a window to the previous / next display, fn⌃⌘↑ / fn⌃⌘↓ to maximize / center, fn⌃⌥⌘↑ / fn⌃⌥⌘↓ to make it larger / smaller — next to macOS' own fn⌃-arrow tiling, all other Rectangle shortcuts and drag-to-snap off. Applied by `run_onchange_after_darwin-rectangle-config.sh`; grant Rectangle Accessibility access once per Mac |
-| `private_dot_config/claude-cmd/prefs.md` | Preferences for [claude-cmd-deluxe](https://github.com/bvleur/claude-cmd-deluxe) (loaded as an antidote plugin, `CLAUDE_CMD_LANG=Dutch` in `00-env.zsh`): ⌃G turns text into a shell command, ⌃; (Ghostty) / ⌃X e explains, ⌃X f fixes the previous command. `prefs.md` holds the preferred tools and option style |
+| `private_dot_config/claude-cmd/prefs.md` | Preferences for [claude-cmd-deluxe](https://github.com/bvleur/claude-cmd-deluxe) (loaded as an antidote plugin, `CLAUDE_CMD_LANG=Dutch` in `00-env.zsh`): in Ghostty ⌃; turns text into a shell command and ⌃⇧; opens a menu (e explain, E explain in a pager, f fix the previous command, h all keys); elsewhere ⌃G, ⌃X e, ⌃X f. `prefs.md` holds the preferred tools and option style |
 
 ### Machine type (`purpose`)
 
@@ -75,10 +75,10 @@ chezmoi init --apply https://github.com/bvleur/dotfiles.git
 
 | Command | What it does |
 |---|---|
-| `help` | Lists my custom aliases and functions with a description (`help <text>` filters). Descriptions are `#: …` comment lines above each alias / function in `conf.d/*.zsh`. Internal helpers get a leading `_` and stay hidden; `help --check` lists public names that still lack a description |
+| `help` | Lists my custom aliases and functions by category (system config, files, git, ccd, then the rest). `help --all` also shows the rarely used ones, `help <text>` searches all. Descriptions are `#: [category] …` comment lines above each alias / function in `conf.d/*.zsh`; `#: [category, more] …` marks a rarely used one. Internal helpers get a leading `_` and stay hidden; `help --check` lists public names that still lack a description |
 | `dots` | Opens the chezmoi source directory in Zed |
 | `v <file>...` | Views files with the best installed viewer: `.md` via glow, `.docx` via doxx (same as the yazi previews), `.json` via jless, `.csv`/`.tsv` via csvlens, binary files via hexyl, directories via eza, everything else via bat (falls back to `less`) |
-| `claude-cmd-prefs` | Edit the claude-cmd preferences (preferred CLI tools, long-form options) through chezmoi |
+| `ccd-prefs` | Edit the ccd preferences (preferred CLI tools, long-form options) through chezmoi |
 | `chezmoi edit <file>` | Edit a dotfile through chezmoi |
 | `chezmoi apply` | Apply changes to the system |
 | `chezmoi diff` | Preview what would change before applying |

@@ -21,7 +21,7 @@ _plugin_drift_pins() {
   done < "$1"
 }
 
-#: pinned zsh plugins that have a newer commit on GitHub, with the line to put in .zsh_plugins.txt
+#: [system config, more] pinned zsh plugins that have a newer commit on GitHub, with the line to put in .zsh_plugins.txt
 plugin-drift() {
   emulate -L zsh
   local _DRIFT_TTY; _drift_tty
