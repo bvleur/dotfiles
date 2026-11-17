@@ -27,8 +27,18 @@ fi
 command -v viddy >/dev/null 2>&1 && alias watch='viddy'
 
 # --- git (the rest goes through lazygit) ---
+#: git status
+alias gs='git status'
+
 #: git pull
 alias gl='git pull'
+
+#: git push
+alias gp='git push'
+
+# an alias appends its arguments, so `gcam "message"` runs `git commit --all --message "message"`
+#: commit all tracked changes, message as argument: gcam "message"
+alias gcam='git commit --all --message'
 
 #: lazygit (git TUI)
 command -v lazygit >/dev/null 2>&1 && alias lg='lazygit'
