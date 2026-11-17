@@ -8,13 +8,13 @@ A zsh widget that turns text into a shell command, or modifies an existing comma
 |---|---|
 | `⌃G` | Generate 3 alternatives from the text in the buffer; the best one goes into the buffer. Modify an existing command with `command # instruction`. |
 | `⌃G` (again) | Cycle through the 3 alternatives, locally, without a new call. |
-| `⌃X e` | Explain the command in the buffer (empty buffer: the previous command). Haiku answers in markdown, rendered in colour with glow under the prompt: one sentence, then a table with a row per part of the command. The buffer stays as it is. |
+| `⌃X e` | Explain the command in the buffer (empty buffer: the previous command). Haiku answers in markdown, rendered in colour with glow above the prompt: one sentence, then a table with a row per part of the command. The buffer stays as it is. |
 | `⌃X f` | Fix the previous command, with its exit status as context. Optionally type a hint first (e.g. the error message). |
 | `⌃_` | Undo (standard zle undo). |
 | `⌃⇧;` (Ghostty only) | Show an overview of the keys. No model call. Elsewhere: `claude-cmd-help`. |
 
-- **Markdown explanations:** the explain prompt asks for markdown; `_cc_render` pipes it through `glow` (same flags as the yazi previewer and `v`). Code fences without a language are rewritten to `sh` first so snippets are highlighted. Without glow the raw markdown is printed. The output goes into the bottom area (see below), which can show colour and wide tables.
-- **Bottom area:** everything claude-cmd shows (info bar, progress, errors, explanations, help) is drawn under the prompt line through zle's `POSTDISPLAY` (`_cc_bar`). It is cleared when the line is accepted (`add-zle-hook-widget line-finish`, so other plugins' hooks keep working). After every action the info bar shows the position (`1/3`), the label of the alternative and the shortcuts.
+- **Markdown explanations:** the explain prompt asks for markdown; `_cc_render` pipes it through `glow` (same flags as the yazi previewer and `v`). Code fences without a language are rewritten to `sh` first so snippets are highlighted. Without glow the raw markdown is printed. The output is printed above the prompt (`zle -I`), because the bottom area (see below) can't show ANSI colour.
+- **Bottom area:** the plain-text messages (info bar, progress, errors) are drawn under the prompt line through zle's `POSTDISPLAY` (`_cc_bar`). It is cleared when the line is accepted (`add-zle-hook-widget line-finish`, so other plugins' hooks keep working). After every action the info bar shows the position (`1/3`), the label of the alternative and the shortcuts.
 - **Warning:** for destructive commands (`rm`, `--force`, `git reset --hard`, …) the info bar adds a ⚠ line.
 - **Helper commands:**
   - `claude-cmd-prefs`: edit the preferences, through `chezmoi edit --apply`.

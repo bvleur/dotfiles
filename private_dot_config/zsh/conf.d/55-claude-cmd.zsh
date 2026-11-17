@@ -227,8 +227,9 @@ _cc_is_destructive() {
   return 1
 }
 
-# Everything claude-cmd shows goes in POSTDISPLAY: zle draws it under the prompt line, and it is
-# cleared again when the line is accepted (see _cc_line_finish). Empty $1 clears it.
+# Plain-text messages (info bar, progress, errors) go in POSTDISPLAY: zle draws it under the prompt line, and it
+# is cleared again when the line is accepted (see _cc_line_finish). Empty $1 clears it. No ANSI colour here:
+# zle prints escape codes in POSTDISPLAY literally.
 _cc_bar() {
   if [[ -n $1 ]]; then POSTDISPLAY=$'\n'"$1"; else POSTDISPLAY=""; fi
   zle -R
@@ -305,7 +306,11 @@ $target")
   if [[ -z ${out//[[:space:]]/} ]]; then
     _cc_bar "$(_cc_error_msg)"
   else
-    _cc_bar "$(print -r -- "$out" | _cc_render)"
+    # Coloured markdown can't go in POSTDISPLAY (zle shows the escape codes literally), so print it above
+    # the prompt; the plain-text bottom area is only cleared of its progress line.
+    zle -I
+    print -r -- "$(print -r -- "$out" | _cc_render)"
+    _cc_bar ""
   fi
 }
 
@@ -380,7 +385,9 @@ Helpers: \`claude-cmd-prefs\`, \`claude-cmd-refresh\`, \`claude-cmd-context\`."
 
 #: zle widget for the help key: shows the overview above the prompt, without a model call
 claude-cmd-help-widget() {
-  _cc_bar "$(claude-cmd-help)"
+  zle -I
+  claude-cmd-help
+  _cc_bar ""
 }
 
 # Refresh the tool list at most once per 24 hours, in the background
