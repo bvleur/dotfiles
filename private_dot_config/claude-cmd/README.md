@@ -8,10 +8,11 @@ A zsh widget that turns text into a shell command, or modifies an existing comma
 |---|---|
 | `⌃G` | Generate 3 alternatives from the text in the buffer; the best one goes into the buffer. Modify an existing command with `command # instruction`. |
 | `⌃G` (again) | Cycle through the 3 alternatives, locally, without a new call. |
-| `⌃X e` | Explain the command in the buffer (empty buffer: the previous command). The buffer stays as it is. |
+| `⌃X e` | Explain the command in the buffer (empty buffer: the previous command). Haiku answers in markdown, rendered in colour with glow above the prompt (a table when the result is tabular). The buffer stays as it is. |
 | `⌃X f` | Fix the previous command, with its exit status as context. Optionally type a hint first (e.g. the error message). |
 | `⌃_` | Undo (standard zle undo). |
 
+- **Markdown explanations:** the explain prompt asks for markdown; `_cc_render` pipes it through `glow` (same flags as the yazi previewer and `v`). Code fences without a language are rewritten to `sh` first so snippets are highlighted. Without glow the raw markdown is printed. The output is printed above the prompt (`zle -I`), not via `zle -M`, which can't show colour or wide tables reliably.
 - **Info bar:** after every action, `zle -M` shows the position (`1/3`), the label of the alternative and the shortcuts under the prompt.
 - **Warning:** for destructive commands (`rm`, `--force`, `git reset --hard`, …) the info bar adds a ⚠ line.
 - **Helper commands:**
@@ -56,6 +57,7 @@ The widget does nothing when `claude` isn't on `PATH`, so it is safe on both Mac
 | Variable | Default |
 |---|---|
 | `CLAUDE_CMD_MODEL` | `haiku` |
+| `CLAUDE_CMD_GLOW_STYLE` | `dark` (glow style for explanations) |
 | `CLAUDE_CMD_LANG` | `Dutch` (language of explanations and labels) |
 | `CLAUDE_CMD_KEY_GEN` / `_EXPLAIN` / `_FIX` | `^G` / `^Xe` / `^Xf` |
 | `CLAUDE_CMD_CANDIDATES` | array of individual binaries to check |

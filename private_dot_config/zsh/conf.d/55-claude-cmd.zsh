@@ -14,6 +14,7 @@
 
 : ${CLAUDE_CMD_MODEL:=haiku}
 : ${CLAUDE_CMD_LANG:=Dutch}
+: ${CLAUDE_CMD_GLOW_STYLE:=dark}
 : ${CLAUDE_CMD_PREFS:=${XDG_CONFIG_HOME:-$HOME/.config}/claude-cmd/prefs.md}
 : ${CLAUDE_CMD_CACHE:=${XDG_CACHE_HOME:-$HOME/.cache}/claude-cmd}
 : ${CLAUDE_CMD_KEY_GEN:='^G'}
@@ -95,12 +96,14 @@ Rules:
 
 _cc_sys_explain() {
   print -r -- "Explain the given zsh command, in $CLAUDE_CMD_LANG, for the machine described in <context>.
-Format, plain text, no markdown:
-- Line 1: one sentence on what the command does as a whole.
-- Then one line per relevant part (option, argument, pipe stage), formatted as: '  <part>  →  <meaning>'.
+Output GitHub-flavoured markdown, which is rendered in the terminal:
+- Start with one sentence on what the command does as a whole.
+- Then explain each relevant part (option, argument, pipe stage) as a bullet: \`part\` → meaning. Wrap every command, option and path in single backticks.
+- Use a markdown table instead of bullets only when the result is genuinely tabular: several parts with several attributes each, or a comparison. Never use a table for a simple list.
+- Put multi-line snippets in fenced code blocks and always give the fence a language (\`\`\`sh).
 - If the command is destructive or irreversible, end with a line starting with '⚠ ' that says what can be lost.
 - If an option does not exist on this OS's version of the tool, say so explicitly.
-Maximum 12 lines."
+- No headings, no preamble, no closing remarks. Maximum 15 lines."
 }
 
 # ── claude ───────────────────────────────────────────────────────────────────
@@ -156,6 +159,23 @@ _cc_parse() {
     cur=${(F)${lines:#'```'*}}; label=""; _cc_flush
   fi
   unfunction _cc_flush
+}
+
+# Markdown on stdin → coloured text on stdout, via glow (same invocation as the yazi previewer and `v`).
+# Fences without a language are treated as `sh`, so shell snippets always get syntax highlighting.
+# Falls back to the raw markdown when glow is missing.
+_cc_render() {
+  local md
+  md=$(command awk '
+    /^[[:space:]]*```[[:space:]]*$/ { if (!open) { sub(/```.*/, "```sh") } open = !open; print; next }
+    /^[[:space:]]*```/              { open = 1 }
+    { print }
+  ')
+  if (( $+commands[glow] )); then
+    print -r -- "$md" | CLICOLOR_FORCE=1 command glow -w=${COLUMNS:-80} -s=$CLAUDE_CMD_GLOW_STYLE -
+  else
+    print -r -- "$md"
+  fi
 }
 
 # ── info bar ──────────────────────────────────────────────────────────────────
@@ -260,7 +280,10 @@ $target")
   if [[ -z ${out//[[:space:]]/} ]]; then
     zle -M "$(_cc_error_msg)"
   else
-    zle -M "$out"
+    # Print above the prompt instead of `zle -M`: the message area can't show colour or wide tables reliably
+    zle -I
+    print -r -- "$(print -r -- "$out" | _cc_render)"
+    zle -M ""
   fi
 }
 
