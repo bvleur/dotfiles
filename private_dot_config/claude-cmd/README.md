@@ -11,6 +11,7 @@ A zsh widget that turns text into a shell command, or modifies an existing comma
 | `⌃X e` | Explain the command in the buffer (empty buffer: the previous command). Haiku answers in markdown, rendered in colour with glow above the prompt (a table when the result is tabular). The buffer stays as it is. |
 | `⌃X f` | Fix the previous command, with its exit status as context. Optionally type a hint first (e.g. the error message). |
 | `⌃_` | Undo (standard zle undo). |
+| `⌃⇧;` (Ghostty only) | Show an overview of the keys. No model call. Elsewhere: `claude-cmd-help`. |
 
 - **Markdown explanations:** the explain prompt asks for markdown; `_cc_render` pipes it through `glow` (same flags as the yazi previewer and `v`). Code fences without a language are rewritten to `sh` first so snippets are highlighted. Without glow the raw markdown is printed. The output is printed above the prompt (`zle -I`), not via `zle -M`, which can't show colour or wide tables reliably.
 - **Info bar:** after every action, `zle -M` shows the position (`1/3`), the label of the alternative and the shortcuts under the prompt.
@@ -19,6 +20,7 @@ A zsh widget that turns text into a shell command, or modifies an existing comma
   - `claude-cmd-prefs`: edit the preferences, through `chezmoi edit --apply`.
   - `claude-cmd-refresh`: refresh the tool list.
   - `claude-cmd-context`: show the context Claude receives.
+  - `claude-cmd-help`: show the key overview (rendered with glow, no model call).
 
 ## Decisions
 
@@ -60,6 +62,7 @@ The widget does nothing when `claude` isn't on `PATH`, so it is safe on both Mac
 | `CLAUDE_CMD_GLOW_STYLE` | `dark` (glow style for explanations) |
 | `CLAUDE_CMD_LANG` | `Dutch` (language of explanations and labels) |
 | `CLAUDE_CMD_KEY_GEN` / `_EXPLAIN` / `_FIX` | `^G` / `⌃;` in Ghostty and `^Xe` elsewhere / `^Xf` |
+| `CLAUDE_CMD_KEY_HELP` | `⌃⇧;` (`ESC [ 59 ; 6 u`) in Ghostty, empty elsewhere |
 | `CLAUDE_CMD_CANDIDATES` | array of individual binaries to check |
 
 ## Known limitations

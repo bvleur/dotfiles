@@ -26,6 +26,11 @@ else
   : ${CLAUDE_CMD_KEY_EXPLAIN:='^Xe'}
 fi
 : ${CLAUDE_CMD_KEY_FIX:='^Xf'}
+if [[ $TERM_PROGRAM == ghostty ]]; then
+  : ${CLAUDE_CMD_KEY_HELP:=$'\e[59;6u'}
+else
+  : ${CLAUDE_CMD_KEY_HELP:=}   # empty: no key, use the claude-cmd-help command
+fi
 # Binaries checked individually, next to `brew leaves` (which gives package names, not binaries)
 (( ${+CLAUDE_CMD_CANDIDATES} )) || typeset -ga CLAUDE_CMD_CANDIDATES=(
   rg fd bat eza zoxide fzf jq yq xh httpie sd delta dust duf procs btop hyperfine
@@ -190,6 +195,8 @@ _cc_keylabel() {
   local k=$1 r
   if [[ $k == $'\e[59;5u' ]]; then
     print -rn -- '⌃;'
+  elif [[ $k == $'\e[59;6u' ]]; then
+    print -rn -- '⌃⇧;'
   elif [[ $k == '^['?* ]]; then
     print -rn -- "⌥${(U)k[3,-1]}"
   elif [[ $k == '^'?* ]]; then
@@ -320,6 +327,7 @@ zle -N claude-cmd-fix
 bindkey "$CLAUDE_CMD_KEY_GEN" claude-cmd-generate
 bindkey "$CLAUDE_CMD_KEY_EXPLAIN" claude-cmd-explain
 bindkey "$CLAUDE_CMD_KEY_FIX" claude-cmd-fix
+[[ -n $CLAUDE_CMD_KEY_HELP ]] && { zle -N claude-cmd-help-widget; bindkey "$CLAUDE_CMD_KEY_HELP" claude-cmd-help-widget; }
 
 # ── helper commands ────────────────────────────────────────────────────────────
 
@@ -339,6 +347,36 @@ claude-cmd-refresh() {
 
 #: show exactly what context claude-cmd sends to Claude
 claude-cmd-context() { _cc_context }
+
+#: overview of the widget's keys, rendered as markdown; calls no model
+claude-cmd-help() {
+  emulate -L zsh
+  local help helprow=""
+  [[ -n $CLAUDE_CMD_KEY_HELP ]] && helprow="| \`$(_cc_keylabel $CLAUDE_CMD_KEY_HELP)\` | Deze help. |"$'\n'
+  help="# claude-cmd
+
+| Toets | Wat |
+|---|---|
+| \`$(_cc_keylabel $CLAUDE_CMD_KEY_GEN)\` | Maak een commando van de tekst in de buffer. Wijzig een bestaand commando met \`commando # instructie\`. |
+| \`$(_cc_keylabel $CLAUDE_CMD_KEY_GEN)\` nog eens | Volgend alternatief van de drie (lokaal, geen nieuwe aanvraag). |
+| \`$(_cc_keylabel $CLAUDE_CMD_KEY_EXPLAIN)\` | Leg het commando in de buffer uit (leeg: het vorige commando). |
+| \`$(_cc_keylabel $CLAUDE_CMD_KEY_FIX)\` | Repareer het vorige commando. Typ eerst een hint, bijvoorbeeld de foutmelding. |
+| \`⌃_\` | Ongedaan maken. |
+${helprow}
+Helpers: \`claude-cmd-prefs\`, \`claude-cmd-refresh\`, \`claude-cmd-context\`."
+  if (( $+commands[glow] )); then
+    print -r -- "$help" | CLICOLOR_FORCE=1 command glow -w=${COLUMNS:-80} -s=$CLAUDE_CMD_GLOW_STYLE -
+  else
+    print -r -- "$help"
+  fi
+}
+
+#: zle widget for the help key: shows the overview above the prompt, without a model call
+claude-cmd-help-widget() {
+  zle -I
+  claude-cmd-help
+  zle -M ""
+}
 
 # Refresh the tool list at most once per 24 hours, in the background
 _cc_tools_stale && { _cc_refresh_tools &! } 2>/dev/null
