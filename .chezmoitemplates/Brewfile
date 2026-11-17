@@ -24,6 +24,7 @@ brew "hexyl"         # hex viewer, used by `v` for binary files
 brew "jless"         # JSON viewer, used by `v` for .json
 brew "csvlens"       # interactive CSV viewer, used by `v` for .csv/.tsv
 brew "zoxide"        # smart cd
+brew "timescam/homebrew-tap/pay-respects"  # offline command fixer (`f`), thefuck successor; not in homebrew-core
 cask "1password-cli"
 
 # === Modern CLI replacements ===

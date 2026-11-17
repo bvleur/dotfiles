@@ -47,6 +47,9 @@ help() {
       # also `cond && alias x=…` (aliases that only exist when their tool is installed)
       if (match($0, /(^[[:space:]]*|&&[[:space:]]*|;[[:space:]]*)alias[[:space:]]+[^=[:space:]]+=/)) {
         t="alias"; n=substr($0, RSTART, RLENGTH); sub(/.*alias[[:space:]]+/, "", n); sub(/=$/, "", n)
+      } else if (match($0, /pay-respects zsh --alias [^[:space:]]+/)) {
+        # the alias is created by pay-respects itself: `eval "$(pay-respects zsh --alias NAME)"`
+        t="alias"; n=substr($0, RSTART, RLENGTH); sub(/.*--alias /, "", n)
       } else if (match($0, /^[[:space:]]*(function[[:space:]]+)?[A-Za-z0-9_.-]+[[:space:]]*\(\)/)) {
         t="function"; n=$0; sub(/^[[:space:]]*(function[[:space:]]+)?/, "", n); sub(/[[:space:]]*\(\).*/, "", n)
       }

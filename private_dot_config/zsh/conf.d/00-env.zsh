@@ -20,3 +20,6 @@ CLAUDE_CMD_LANG=Dutch
 # --- editor ---
 export EDITOR=nvim
 export VISUAL=nvim
+
+# pay-respects: never send anything to its AI service (offline rules only; ccd covers the Claude-based fix)
+export _PR_AI_DISABLE=1
