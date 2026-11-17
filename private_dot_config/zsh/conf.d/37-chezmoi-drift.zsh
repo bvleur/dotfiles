@@ -4,6 +4,7 @@
 #                    brewfile-drift             (36-brewfile.zsh)
 #                    vicinae-shortcuts-drift    (38-vicinae-drift.zsh)
 #                    vicinae-settings-drift     (38-vicinae-drift.zsh)
+#                    plugin-drift               (39-plugin-drift.zsh)
 #                  Each of those can be run on its own. Add new ones to the list at the bottom.
 #
 # Every finding comes with a "→" line: the command that resolves it. Output helpers live in 35-drift-ui.zsh.
@@ -126,7 +127,7 @@ chezmoi-drift() {
 
   # ── specific drifts
   local drift
-  for drift in brewfile-drift vicinae-shortcuts-drift vicinae-settings-drift; do
+  for drift in brewfile-drift vicinae-shortcuts-drift vicinae-settings-drift plugin-drift; do
     print ""
     if (( ${+functions[$drift]} )); then
       $drift
