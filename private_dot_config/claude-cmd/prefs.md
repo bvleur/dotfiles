@@ -1,5 +1,5 @@
-# claude-cmd preferences
-<!-- Managed in chezmoi. Edit with: claude-cmd-prefs -->
+# ccd (claude-cmd-deluxe) preferences
+<!-- Managed in chezmoi. Edit with: ccd-prefs -->
 
 ## Tools (use these when installed)
 - Search file contents: rg, not grep

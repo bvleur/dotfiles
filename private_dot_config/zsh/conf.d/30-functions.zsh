@@ -1,7 +1,7 @@
-#: mkdir -p a directory and cd into it
+#: [files] mkdir -p a directory and cd into it
 mkcd() { mkdir -p "$1" && cd "$1"; }
 
-#: yazi file manager that cd's to the last directory on exit
+#: [files] yazi file manager that cd's to the last directory on exit
 y() {
   local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
   command yazi "$@" --cwd-file="$tmp"
@@ -10,7 +10,7 @@ y() {
   rm -f -- "$tmp"
 }
 
-#: view files with the best viewer per type (md: glow, docx: doxx, json: jless, csv: csvlens, binary: hexyl, dirs: eza), bat as fallback
+#: [files] view files with the best viewer per type (md: glow, docx: doxx, json: jless, csv: csvlens, binary: hexyl, dirs: eza), bat as fallback
 v() {
   emulate -L zsh
   (( $# )) || { print -u2 "usage: v <file>..."; return 1 }
