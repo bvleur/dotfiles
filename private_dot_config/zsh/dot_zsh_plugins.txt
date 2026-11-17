@@ -20,4 +20,4 @@ zfunctions
 # here (full 40-character SHA), chezmoi apply, open a new shell: antidote fetches and checks out the new pin.
 # `antidote update` skips pinned bundles, so this one only changes here; plugin-drift (39) tells you when there is
 # a newer commit.
-bvleur/claude-cmd-deluxe pin:2987891308f71a0e559d9b42b61b5a6214683efe
+bvleur/claude-cmd-deluxe pin:e960b978c351f85e474be9ecb084c540b50f3d5e
