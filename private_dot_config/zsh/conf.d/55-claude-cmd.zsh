@@ -227,18 +227,28 @@ _cc_is_destructive() {
   return 1
 }
 
+# Everything claude-cmd shows goes in POSTDISPLAY: zle draws it under the prompt line, and it is
+# cleared again when the line is accepted (see _cc_line_finish). Empty $1 clears it.
+_cc_bar() {
+  if [[ -n $1 ]]; then POSTDISPLAY=$'\n'"$1"; else POSTDISPLAY=""; fi
+  zle -R
+}
+
+_cc_line_finish() { POSTDISPLAY="" }
+autoload -Uz add-zle-hook-widget
+add-zle-hook-widget line-finish _cc_line_finish
+
 _cc_show() {
   BUFFER=${_cc_alts[_cc_idx]}
   CURSOR=$#BUFFER
   local warn="" label=${_cc_labels[_cc_idx]}
   _cc_is_destructive "$BUFFER" && warn="⚠ destructief — lees goed voor je Enter drukt
 "
-  zle -M "${warn}✦ claude ${_cc_idx}/${#_cc_alts}${label:+ · $label}   │   $(_cc_hints volgende)"
+  _cc_bar "${warn}✦ claude ${_cc_idx}/${#_cc_alts}${label:+ · $label}   │   $(_cc_hints volgende)"
 }
 
 _cc_busy() {
-  zle -M "⏳ claude ($CLAUDE_CMD_MODEL) $1…"
-  zle -R
+  _cc_bar "⏳ claude ($CLAUDE_CMD_MODEL) $1…"
 }
 
 # ── widgets ──────────────────────────────────────────────────────────────────
@@ -252,7 +262,7 @@ $(_cc_context)
 $1")
   _cc_parse "$out"
   if (( ! ${#_cc_alts} )); then
-    zle -M "$(_cc_error_msg)"
+    _cc_bar "$(_cc_error_msg)"
     return 1
   fi
   _cc_idx=1
@@ -268,7 +278,7 @@ claude-cmd-generate() {
     return
   fi
   if [[ -z ${BUFFER//[[:space:]]/} ]]; then
-    zle -M "claude: typ eerst wat je wilt doen   │   $(_cc_hints)"
+    _cc_bar "claude: typ eerst wat je wilt doen   │   $(_cc_hints)"
     return
   fi
   _cc_busy "denkt na"
@@ -281,7 +291,7 @@ claude-cmd-explain() {
   local target=$BUFFER
   [[ -z ${target//[[:space:]]/} ]] && target=${history[$(( HISTCMD - 1 ))]}
   if [[ -z $target ]]; then
-    zle -M "claude: niets om uit te leggen"
+    _cc_bar "claude: niets om uit te leggen"
     return
   fi
   _cc_busy "legt uit"
@@ -293,12 +303,9 @@ $(_cc_context)
 Command:
 $target")
   if [[ -z ${out//[[:space:]]/} ]]; then
-    zle -M "$(_cc_error_msg)"
+    _cc_bar "$(_cc_error_msg)"
   else
-    # Print above the prompt instead of `zle -M`: the message area can't show colour or wide tables reliably
-    zle -I
-    print -r -- "$(print -r -- "$out" | _cc_render)"
-    zle -M ""
+    _cc_bar "$(print -r -- "$out" | _cc_render)"
   fi
 }
 
@@ -306,7 +313,7 @@ $target")
 claude-cmd-fix() {
   local last=${history[$(( HISTCMD - 1 ))]}
   if [[ -z $last ]]; then
-    zle -M "claude: geen vorig commando gevonden"
+    _cc_bar "claude: geen vorig commando gevonden"
     return
   fi
   local hint=${BUFFER//[[:space:]]/}
@@ -373,9 +380,7 @@ Helpers: \`claude-cmd-prefs\`, \`claude-cmd-refresh\`, \`claude-cmd-context\`."
 
 #: zle widget for the help key: shows the overview above the prompt, without a model call
 claude-cmd-help-widget() {
-  zle -I
-  claude-cmd-help
-  zle -M ""
+  _cc_bar "$(claude-cmd-help)"
 }
 
 # Refresh the tool list at most once per 24 hours, in the background
