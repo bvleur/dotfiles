@@ -1,0 +1,7 @@
+#!/bin/bash
+# Google Chrome is only a test browser (Zen stays the default): stop the
+# "make Chrome your default browser" prompt. Per-user pref, no admin rights needed.
+# Equivalent of the DefaultBrowserSettingEnabled enterprise policy.
+set -eu
+
+defaults write com.google.Chrome DefaultBrowserSettingEnabled -bool false

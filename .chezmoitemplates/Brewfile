@@ -43,7 +43,8 @@ brew "lazygit"       # git TUI (invoked directly by LazyVim <leader>gg)
 
 # === GUI apps ===
 cask "ghostty"
-cask "zen"             # Zen browser (Firefox-based)
+cask "zen"             # Zen browser (Firefox-based), the default browser
+cask "google-chrome"   # stable Chrome, only as a test browser (never default, see chrome-defaults script)
 cask "zed"
 cask "iina"
 cask "monitorcontrol"
