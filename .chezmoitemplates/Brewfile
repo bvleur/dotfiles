@@ -15,6 +15,7 @@ brew "httpie"        # HTTP client
 brew "mas"           # Mac App Store CLI (used by the mas entries below)
 brew "mise"          # dev-tool version manager (owns node/java/python/...)
 brew "neovim"        # editor
+brew "usage"         # needed by `mise completion zsh` (task names + descriptions on <Tab>)
 brew "tlrc"          # tldr client
 brew "viddy"         # modern watch replacement (aliased to `watch`)
 brew "yazi"          # terminal file manager (`y`), config: ~/.config/yazi
