@@ -15,11 +15,17 @@ brew "httpie"        # HTTP client
 brew "mas"           # Mac App Store CLI (used by the mas entries below)
 brew "mise"          # dev-tool version manager (owns node/java/python/...)
 brew "neovim"        # editor
+brew "usage"         # needed by `mise completion zsh` (task names + descriptions on <Tab>)
 brew "tlrc"          # tldr client
+brew "viddy"         # modern watch replacement (aliased to `watch`)
 brew "yazi"          # terminal file manager (`y`), config: ~/.config/yazi
 brew "glow"          # markdown renderer, used for .md previews in yazi
 brew "doxx"          # .docx viewer, used by the doxx yazi plugin
+brew "hexyl"         # hex viewer, used by `v` for binary files
+brew "jless"         # JSON viewer, used by `v` for .json
+brew "csvlens"       # interactive CSV viewer, used by `v` for .csv/.tsv
 brew "zoxide"        # smart cd
+brew "timescam/homebrew-tap/pay-respects"  # offline command fixer (`f`), thefuck successor; not in homebrew-core
 cask "1password-cli"
 
 # === Modern CLI replacements ===
@@ -39,7 +45,8 @@ brew "lazygit"       # git TUI (invoked directly by LazyVim <leader>gg)
 
 # === GUI apps ===
 cask "ghostty"
-cask "zen"             # Zen browser (Firefox-based)
+cask "zen"             # Zen browser (Firefox-based), the default browser
+cask "google-chrome"   # stable Chrome, only as a test browser (never default, see chrome-defaults script)
 cask "zed"
 cask "iina"
 cask "monitorcontrol"

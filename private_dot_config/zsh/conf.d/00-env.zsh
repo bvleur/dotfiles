@@ -11,6 +11,15 @@ if [[ -z ${HOMEBREW_PREFIX-} ]]; then
 fi
 [[ -d $HOMEBREW_PREFIX/share/zsh/site-functions ]] && FPATH=$HOMEBREW_PREFIX/share/zsh/site-functions:$FPATH
 
+# --- help (70): extra files whose `#:` description lines it lists; plugins loaded in 50 can add themselves ---
+typeset -ga HELP_SOURCES
+
+# --- claude-cmd-deluxe (loaded by antidote in 50; settings must come before it) ---
+CLAUDE_CMD_LANG=Dutch
+
 # --- editor ---
 export EDITOR=nvim
 export VISUAL=nvim
+
+# pay-respects: never send anything to its AI service (offline rules only; ccd covers the Claude-based fix)
+export _PR_AI_DISABLE=1
