@@ -15,5 +15,8 @@ prompt
 utility
 zfunctions
 
-# claude-cmd: text → command, explain, fix (⌃G, ⌃; / ⌃X e, ⌃X f); last, so its key bindings win
-bvleur/claude-cmd-deluxe
+# claude-cmd: text → command, explain, fix (⌃G, ⌃; / ⌃X e, ⌃X f); last, so its key bindings win.
+# Pinned so both Macs run the same version. To update: put the new commit of bvleur/claude-cmd-deluxe main
+# here (full 40-character SHA), chezmoi apply, open a new shell: antidote fetches and checks out the new pin.
+# `antidote update` skips pinned bundles, so this one only changes here.
+bvleur/claude-cmd-deluxe pin:80f62cd22aa5cbf935b0a9daadaa8af8c06d1f29
