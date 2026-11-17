@@ -8,7 +8,7 @@ A zsh widget that turns text into a shell command, or modifies an existing comma
 |---|---|
 | `⌃G` | Generate 3 alternatives from the text in the buffer; the best one goes into the buffer. Modify an existing command with `command # instruction`. |
 | `⌃G` (again) | Cycle through the 3 alternatives, locally, without a new call. |
-| `⌃X e` | Explain the command in the buffer (empty buffer: the previous command). Haiku answers in markdown, rendered in colour with glow under the prompt (a table when the result is tabular). The buffer stays as it is. |
+| `⌃X e` | Explain the command in the buffer (empty buffer: the previous command). Haiku answers in markdown, rendered in colour with glow under the prompt: one sentence, then a table with a row per part of the command. The buffer stays as it is. |
 | `⌃X f` | Fix the previous command, with its exit status as context. Optionally type a hint first (e.g. the error message). |
 | `⌃_` | Undo (standard zle undo). |
 | `⌃⇧;` (Ghostty only) | Show an overview of the keys. No model call. Elsewhere: `claude-cmd-help`. |

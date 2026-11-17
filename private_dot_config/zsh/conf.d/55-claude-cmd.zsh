@@ -109,12 +109,12 @@ _cc_sys_explain() {
   print -r -- "Explain the given zsh command, in $CLAUDE_CMD_LANG, for the machine described in <context>.
 Output GitHub-flavoured markdown, which is rendered in the terminal:
 - Start with one sentence on what the command does as a whole.
-- Then explain each relevant part (option, argument, pipe stage) as a bullet: \`part\` → meaning. Wrap every command, option and path in single backticks.
-- Use a markdown table instead of bullets only when the result is genuinely tabular: several parts with several attributes each, or a comparison. Never use a table for a simple list.
+- Then explain every relevant part (pipe stage, option, argument) in ONE markdown table with the columns Part and Meaning (column titles in $CLAUDE_CMD_LANG), one row per part, in command order. Put a sub-part such as an option of a pipe stage in its own row. No nested lists, no arrows.
+- In table cells wrap every command, option and path in single backticks, and write a literal pipe character as \\| so it does not split the cell.
 - Put multi-line snippets in fenced code blocks and always give the fence a language (\`\`\`sh).
 - If the command is destructive or irreversible, end with a line starting with '⚠ ' that says what can be lost.
 - If an option does not exist on this OS's version of the tool, say so explicitly.
-- No headings, no preamble, no closing remarks. Maximum 15 lines."
+- No headings, no preamble, no closing remarks. Keep every Meaning cell to one short sentence."
 }
 
 # ── claude ───────────────────────────────────────────────────────────────────
