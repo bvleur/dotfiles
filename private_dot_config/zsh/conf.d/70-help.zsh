@@ -24,6 +24,7 @@ help() {
   local _DRIFT_TTY; _drift_tty
   local dir=${ZDOTDIR:-$HOME/.config/zsh}/conf.d
   local -a files; files=($dir/*.zsh(N) ${^HELP_SOURCES}(N))
+  files=(${(u)files:A})   # the same file twice (via a symlink, or added twice) is read once
   (( ${#files} )) || { print -u2 "help: no config fragments in $dir"; return 1 }
 
   local all=0 check=0 want= arg
@@ -47,9 +48,10 @@ help() {
       # also `cond && alias x=…` (aliases that only exist when their tool is installed)
       if (match($0, /(^[[:space:]]*|&&[[:space:]]*|;[[:space:]]*)alias[[:space:]]+[^=[:space:]]+=/)) {
         t="alias"; n=substr($0, RSTART, RLENGTH); sub(/.*alias[[:space:]]+/, "", n); sub(/=$/, "", n)
-      } else if (match($0, /pay-respects zsh --alias [^[:space:]]+/)) {
+      } else if (match($0, /pay-respects zsh --alias [A-Za-z0-9_.-]+[ )]/)) {
         # the alias is created by pay-respects itself: `eval "$(pay-respects zsh --alias NAME)"`
-        t="alias"; n=substr($0, RSTART, RLENGTH); sub(/.*--alias /, "", n)
+        # (the name must be followed by " " or ")", so this regex line itself does not count as an alias)
+        t="alias"; n=substr($0, RSTART, RLENGTH); sub(/.*--alias /, "", n); sub(/[ )]$/, "", n)
       } else if (match($0, /^[[:space:]]*(function[[:space:]]+)?[A-Za-z0-9_.-]+[[:space:]]*\(\)/)) {
         t="function"; n=$0; sub(/^[[:space:]]*(function[[:space:]]+)?/, "", n); sub(/[[:space:]]*\(\).*/, "", n)
       }
@@ -70,7 +72,7 @@ help() {
       }
       d=""
     }' $files)}")
-  rows=(${rows:#})
+  rows=(${(u)rows:#})   # identical entries once, e.g. a plugin present at two paths
 
   local -a missing=(${(M)rows:#missing$'\t'*})
   rows=(${rows:#missing$'\t'*})

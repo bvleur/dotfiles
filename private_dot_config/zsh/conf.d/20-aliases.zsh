@@ -12,9 +12,6 @@ alias cu='chezmoi update'
 # --- modern replacements (only active when the tool exists) ---
 #: [files, more] cat with syntax highlighting (bat), no pager
 command -v bat >/dev/null 2>&1 && alias cat='bat --paging=never'
-# don't override grep (rg and grep differ in flags / exit-code semantics); provide rgg separately
-#: [files] ripgrep, next to the untouched grep
-command -v rg  >/dev/null 2>&1 && alias rgg='rg'
 # eza replaces ls / tree
 if command -v eza >/dev/null 2>&1; then
   #: [files, more] ls with icons and git status (eza)
