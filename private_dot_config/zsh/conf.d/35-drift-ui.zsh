@@ -1,4 +1,5 @@
-# 35-drift-ui.zsh — shared output helpers for the drift commands (36-brewfile, 37-chezmoi-drift, 38-vicinae-drift)
+# 35-drift-ui.zsh — shared output helpers for the drift commands (36-brewfile, 37-chezmoi-drift, 38-vicinae-drift,
+# 39-plugin-drift)
 #
 # Colour only when stdout is a terminal and NO_COLOR is not set, so piping the output to a file stays plain.
 # Every finding is followed by a "→" line with the command(s) that resolve it.

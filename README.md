@@ -82,6 +82,7 @@ chezmoi init --apply https://github.com/bvleur/dotfiles.git
 | `chezmoi edit <file>` | Edit a dotfile through chezmoi |
 | `chezmoi apply` | Apply changes to the system |
 | `chezmoi diff` | Preview what would change before applying |
-| `chezmoi-drift` | Everything that differs between this laptop and the repo (files, git, Brewfile, Vicinae), each with the commands to fix it |
+| `chezmoi-drift` | Everything that differs between this laptop and the repo (files, git, Brewfile, Vicinae, pinned zsh plugins), each with the commands to fix it |
+| `plugin-drift` | Pinned zsh plugins (`pin:` in `.zsh_plugins.txt`) that have a newer commit on GitHub, with the new pin; `antidote update` skips pinned plugins |
 | `brewfile-drift` | Compare installed packages against the Brewfile |
 | `brewfile-edit` | Open the Brewfile in `$EDITOR`; when you changed it, shows the command to commit it |
