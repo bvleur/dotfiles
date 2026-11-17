@@ -1,7 +1,8 @@
 # 70-help.zsh — `help`: list the custom aliases and functions with a short description
 #
 # Descriptions live next to the definitions: put a `#: description` line directly above an alias or function
-# in any conf.d/*.zsh file and it shows up here automatically.
+# in any conf.d/*.zsh file and it shows up here automatically. Plugins can take part too: a file in the
+# HELP_SOURCES array (declared in 00-env.zsh; a plugin adds itself, e.g. claude-cmd-deluxe) is read the same way.
 #
 # Rule: a name without a leading _ is a command for me and needs a `#:` line; a name starting with _ is an
 # internal helper and is never listed. `help --check` lists public names that lack a `#:` line (exit 1), and
@@ -17,7 +18,7 @@ help() {
   emulate -L zsh
   local _DRIFT_TTY; _drift_tty
   local dir=${ZDOTDIR:-$HOME/.config/zsh}/conf.d
-  local -a files; files=($dir/*.zsh(N))
+  local -a files; files=($dir/*.zsh(N) ${^HELP_SOURCES}(N))
   (( ${#files} )) || { print -u2 "help: no config fragments in $dir"; return 1 }
 
   local kind name desc active want=${1-} shown=0 last= row

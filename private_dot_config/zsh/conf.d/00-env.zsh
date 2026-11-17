@@ -11,6 +11,9 @@ if [[ -z ${HOMEBREW_PREFIX-} ]]; then
 fi
 [[ -d $HOMEBREW_PREFIX/share/zsh/site-functions ]] && FPATH=$HOMEBREW_PREFIX/share/zsh/site-functions:$FPATH
 
+# --- help (70): extra files whose `#:` description lines it lists; plugins loaded in 50 can add themselves ---
+typeset -ga HELP_SOURCES
+
 # --- claude-cmd-deluxe (loaded by antidote in 50; settings must come before it) ---
 CLAUDE_CMD_LANG=Dutch
 
