@@ -59,7 +59,7 @@ The widget does nothing when `claude` isn't on `PATH`, so it is safe on both Mac
 | `CLAUDE_CMD_MODEL` | `haiku` |
 | `CLAUDE_CMD_GLOW_STYLE` | `dark` (glow style for explanations) |
 | `CLAUDE_CMD_LANG` | `Dutch` (language of explanations and labels) |
-| `CLAUDE_CMD_KEY_GEN` / `_EXPLAIN` / `_FIX` | `^G` / `^Xe` / `^Xf` |
+| `CLAUDE_CMD_KEY_GEN` / `_EXPLAIN` / `_FIX` | `^G` / `⌃;` in Ghostty and `^Xe` elsewhere / `^Xf` |
 | `CLAUDE_CMD_CANDIDATES` | array of individual binaries to check |
 
 ## Known limitations

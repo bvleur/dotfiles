@@ -18,7 +18,13 @@
 : ${CLAUDE_CMD_PREFS:=${XDG_CONFIG_HOME:-$HOME/.config}/claude-cmd/prefs.md}
 : ${CLAUDE_CMD_CACHE:=${XDG_CACHE_HOME:-$HOME/.cache}/claude-cmd}
 : ${CLAUDE_CMD_KEY_GEN:='^G'}
-: ${CLAUDE_CMD_KEY_EXPLAIN:='^Xe'}
+# Ghostty sends ⌃; as the kitty-keyboard sequence ESC [ 59 ; 5 u (Terminal.app sends nothing for it),
+# so the explain key is ⌃; there and ⌃X e everywhere else.
+if [[ $TERM_PROGRAM == ghostty ]]; then
+  : ${CLAUDE_CMD_KEY_EXPLAIN:=$'\e[59;5u'}
+else
+  : ${CLAUDE_CMD_KEY_EXPLAIN:='^Xe'}
+fi
 : ${CLAUDE_CMD_KEY_FIX:='^Xf'}
 # Binaries checked individually, next to `brew leaves` (which gives package names, not binaries)
 (( ${+CLAUDE_CMD_CANDIDATES} )) || typeset -ga CLAUDE_CMD_CANDIDATES=(
@@ -182,7 +188,9 @@ _cc_render() {
 
 _cc_keylabel() {
   local k=$1 r
-  if [[ $k == '^['?* ]]; then
+  if [[ $k == $'\e[59;5u' ]]; then
+    print -rn -- '⌃;'
+  elif [[ $k == '^['?* ]]; then
     print -rn -- "⌥${(U)k[3,-1]}"
   elif [[ $k == '^'?* ]]; then
     r=${k[3,-1]}; print -rn -- "⌃${(U)k[2]}${r:+ $r}"
