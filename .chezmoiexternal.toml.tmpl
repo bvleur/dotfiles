@@ -1,7 +1,13 @@
-{{- /* Vicinae extension, built and released from https://github.com/bvleur/vicinae-toggle-system-appearance.
-       Bump the tag to update; the vicinae-reload script hashes this file so Vicinae restarts on a new tag. */ -}}
+{{- /* Vicinae extensions, each built and released from its own repo. Bump a tag to update; the vicinae-reload
+       script hashes this file so Vicinae restarts on a new tag.
+       https://github.com/bvleur/vicinae-toggle-system-appearance
+       https://github.com/bvleur/vicinae-finder-finder */ -}}
 {{ if eq .chezmoi.os "darwin" -}}
 [".local/share/vicinae/extensions/toggle-system-appearance"]
     type = "archive"
     url = "https://github.com/bvleur/vicinae-toggle-system-appearance/releases/download/v1.0.0/toggle-system-appearance.tar.gz"
+
+[".local/share/vicinae/extensions/finder-finder"]
+    type = "archive"
+    url = "https://github.com/bvleur/vicinae-finder-finder/releases/download/v0.1.2/finder-finder.tar.gz"
 {{- end }}
