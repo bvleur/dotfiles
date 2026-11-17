@@ -5,6 +5,10 @@
 #: open the chezmoi source repo in Zed
 alias dots='zed "$(chezmoi source-path)"'
 
+# note: shadows /usr/bin/cu (macOS's old UUCP serial "call up" tool); `command cu` still reaches it
+#: chezmoi update (pull the dotfiles repo and apply)
+alias cu='chezmoi update'
+
 # --- modern replacements (only active when the tool exists) ---
 #: cat with syntax highlighting (bat), no pager
 command -v bat >/dev/null 2>&1 && alias cat='bat --paging=never'
