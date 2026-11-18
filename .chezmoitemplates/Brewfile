@@ -71,7 +71,15 @@ cask "jetbrains-toolbox"
 
 {{- if eq .purpose "home" }}
 # === home only ===
+cask "claude"          # Claude desktop app (bol uses a managed install)
 cask "claude-code"   # Claude Code CLI
+{{- end }}
+
+{{- if .server }}
+# === server only (on top of home) ===
+brew "tmux"          # sessions that survive a dropped SSH connection
+brew "xcodes"        # install/switch Xcode versions from the command line (needs an Apple ID login once)
+brew "xcbeautify"    # readable xcodebuild output
 {{- end }}
 
 
