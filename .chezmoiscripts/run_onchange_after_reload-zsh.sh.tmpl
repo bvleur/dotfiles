@@ -1,0 +1,14 @@
+#!/bin/bash
+set -eu
+
+# Restart every open zsh (all terminal tabs) when the zsh config changed. Same as the `reload-all-zsh` alias
+# (conf.d/40-reload.zsh): shells restart at their next prompt. Runs only when one of the hashed files changes.
+{{- range (glob (joinPath .chezmoi.sourceDir "private_dot_config/zsh/conf.d/*")) }}
+# {{ . | base }}: {{ include . | sha256sum }}
+{{- end }}
+{{- range (glob (joinPath .chezmoi.sourceDir "private_dot_config/zsh/dot_z*")) }}
+# {{ . | base }}: {{ include . | sha256sum }}
+{{- end }}
+# dot_zshenv: {{ include "dot_zshenv" | sha256sum }}
+
+pkill -USR1 -x zsh >/dev/null 2>&1 || true
