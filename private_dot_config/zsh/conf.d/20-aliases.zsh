@@ -44,6 +44,10 @@ alias gcam='git commit --all --message'
 #: [git] lazygit (git TUI)
 command -v lazygit >/dev/null 2>&1 && alias lg='lazygit'
 
+# zsh expands aliases before completing, so `mr <Tab>` uses mise's `mise run` completion (no compdef needed)
+#: [dev] mise run: run a mise task (mr <task>)
+command -v mise >/dev/null 2>&1 && alias mr='mise run'
+
 # --- command fixes ---
 # pay-respects (offline, rule-based; `ccd` fixes with Claude): `f` re-runs the previous failed command, corrected.
 # AI suggestions are disabled (_PR_AI_DISABLE in 00-env.zsh); --nocnf skips its command_not_found handler.
