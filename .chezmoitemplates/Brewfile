@@ -74,6 +74,13 @@ cask "jetbrains-toolbox"
 cask "claude-code"   # Claude Code CLI
 {{- end }}
 
+{{- if .server }}
+# === server only (on top of home) ===
+brew "tmux"          # sessions that survive a dropped SSH connection
+brew "xcodes"        # install/switch Xcode versions from the command line (needs an Apple ID login once)
+brew "xcbeautify"    # readable xcodebuild output
+{{- end }}
+
 
 # === Mac App Store ===
 # Log in to the App Store first; installs apps associated with your Apple ID.
