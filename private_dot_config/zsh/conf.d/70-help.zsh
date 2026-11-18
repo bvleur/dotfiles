@@ -18,6 +18,30 @@ unalias help 2>/dev/null
 
 # Entries that aren't active in this shell (e.g. an alias whose tool isn't installed) are shown dimmed.
 
+# One entry, laid out for the terminal width: name column + description wrapped with a hanging indent, or (narrow
+# window, or a name too long for the column) the name on its own line with the description indented below it.
+_help_row() {
+  emulate -L zsh
+  local name=$1 desc=$2 color=$3
+  local width=${COLUMNS:-80} namew=24 line ncolor=cyan
+  [[ $color == dim ]] && ncolor=dim   # inactive: name dimmed too
+  local -a lines
+  if (( width >= 60 && ${#name} < namew )); then
+    local pad=${(l:$((namew + 3)):)}
+    lines=("${(@f)$(print -r -- $desc | fold -s -w $(( width - namew - 3 )))}")
+    print -r -- "  $(_drift_c $ncolor)${(r:$namew:)name}$(_drift_c reset) $(_drift_c $color)${lines[1]}$(_drift_c reset)"
+    for line in "${(@)lines[2,-1]}"; do
+      print -r -- "$pad$(_drift_c $color)$line$(_drift_c reset)"
+    done
+  else
+    lines=("${(@f)$(print -r -- $desc | fold -s -w $(( width > 8 ? width - 6 : 2 )))}")
+    print -r -- "  $(_drift_c $ncolor)$name$(_drift_c reset)"
+    for line in $lines; do
+      print -r -- "    $(_drift_c $color)$line$(_drift_c reset)"
+    done
+  fi
+}
+
 #: [more] my aliases and functions by category; help --all also shows rarely used ones, help <text> searches all
 help() {
   emulate -L zsh
@@ -117,9 +141,9 @@ help() {
         first=0
       fi
       if { [[ $kind == alias ]] && (( ${+aliases[$name]} )) } || { [[ $kind == function ]] && (( ${+functions[$name]} )) }; then
-        print -r -- "  $(_drift_c cyan)${(r:24:)name}$(_drift_c reset) $desc"
+        _help_row $name "$desc" reset
       else
-        print -r -- "  $(_drift_c dim)${(r:24:)name} $desc (not active)$(_drift_c reset)"
+        _help_row $name "$desc (not active)" dim
       fi
       shown=1
     done
@@ -131,5 +155,8 @@ help() {
   fi
   _drift_note ""
   (( hidden )) && _drift_note "$hidden rarely used ones hidden: help --all"
-  _drift_note "Add your own: a '#: [category] description' line above an alias or function in $dir/*.zsh"
+  local note
+  for note in "${(@f)$(print -r -- "Add your own: a '#: [category] description' line above an alias or function in $dir/*.zsh" | fold -s -w $(( ${COLUMNS:-80} > 8 ? ${COLUMNS:-80} - 4 : 4 )))}"; do
+    _drift_note ${note%% #}
+  done
 }
