@@ -56,6 +56,7 @@ cask "snapzy"
 cask "vicinae"
 cask "rectangle"       # only next/previous display shortcuts, config: .chezmoitemplates/RectangleConfig.json
 cask "ticktick"
+cask "claude"          # Claude desktop app (the claude-code cask below is the CLI only)
 
 {{- if eq .purpose "bol" }}
 # === bol only ===
