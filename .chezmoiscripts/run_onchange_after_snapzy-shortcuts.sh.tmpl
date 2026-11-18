@@ -3,7 +3,7 @@
 # JSON like {"keyCode":29,"modifiers":768} (modifiers are Cocoa flags:
 # cmd=256, shift=512, option=2048, ctrl=4096; keyCode is the virtual key code).
 # Only the shortcuts listed here are managed; every other Snapzy preference
-# is left alone. Restart Snapzy afterwards, it only reads these at launch.
+# is left alone. Snapzy only reads these at launch, so it is restarted if running.
 set -eu
 
 # Resolve the bundle id from the installed app; skip quietly if Snapzy is not installed (yet).
@@ -14,3 +14,14 @@ snapzy_shortcut() { # <defaults key> <keyCode> <modifiers>
 }
 
 snapzy_shortcut historyShortcut 29 768  # cmd+shift+0
+
+if pgrep -x Snapzy >/dev/null 2>&1; then
+  echo "==> Restarting Snapzy to load shortcut changes..."
+  # pkill instead of an AppleScript quit: no Automation permission prompt
+  pkill -x Snapzy || true
+  for _ in $(seq 1 20); do
+    pgrep -x Snapzy >/dev/null 2>&1 || break
+    sleep 0.5
+  done
+  open -a Snapzy
+fi
