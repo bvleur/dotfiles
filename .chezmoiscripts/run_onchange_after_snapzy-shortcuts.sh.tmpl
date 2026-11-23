@@ -15,6 +15,9 @@ snapzy_shortcut() { # <defaults key> <keyCode> <modifiers>
 
 snapzy_shortcut historyShortcut 29 768  # cmd+shift+0
 
+# The restart is best-effort: the shortcuts are already written above, so a
+# failed relaunch must never fail (or abort) chezmoi apply. Worst case the new
+# shortcuts load the next time Snapzy is started.
 if pgrep -x Snapzy >/dev/null 2>&1; then
   echo "==> Restarting Snapzy to load shortcut changes..."
   # pkill instead of an AppleScript quit: no Automation permission prompt
@@ -23,5 +26,20 @@ if pgrep -x Snapzy >/dev/null 2>&1; then
     pgrep -x Snapzy >/dev/null 2>&1 || break
     sleep 0.5
   done
-  open -a Snapzy
+  # The process can be gone before LaunchServices has finished tearing it down;
+  # an immediate `open` then fails with error -600 (procNotFound). Pause briefly
+  # and retry a few times.
+  sleep 1
+  reopened=false
+  for _ in 1 2 3 4 5; do
+    if open -a Snapzy >/dev/null 2>&1; then
+      reopened=true
+      break
+    fi
+    sleep 1
+  done
+  if [ "$reopened" = false ]; then
+    echo "warning: could not relaunch Snapzy; start it manually to load the new shortcuts" >&2
+  fi
 fi
+exit 0
