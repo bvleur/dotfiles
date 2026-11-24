@@ -7,7 +7,12 @@
 
 typeset -g _zsh_reload_pending=0
 trap '_zsh_reload_pending=1' USR1
-_zsh_reload_check() { (( _zsh_reload_pending )) && exec zsh -l }
+# The restarted shell sees _ZSH_RELOADED and prints one confirmation line, so you can see which tabs reloaded.
+_zsh_reload_check() { (( _zsh_reload_pending )) && _ZSH_RELOADED=1 exec zsh -l }
+if [[ -n $_ZSH_RELOADED ]]; then
+  print -P '%F{green}zsh reloaded%f'
+  unset _ZSH_RELOADED
+fi
 precmd_functions+=(_zsh_reload_check)
 
 # no popular tool or builtin uses this name
@@ -30,5 +35,5 @@ cu() {
   [[ $before == $after ]] && return 0
   print -P "%F{yellow}zsh config changed (plugins such as ccd included): reloading this shell.%f"
   print "Other open tabs reload at their next prompt (or run: reload-all-zsh)."
-  exec zsh -l
+  _ZSH_RELOADED=1 exec zsh -l
 }
