@@ -1,5 +1,7 @@
 # Shared shell helpers for .chezmoiscripts that need to stop or (re)start a macOS app.
-# Include with: {{ includeTemplate "app-helpers.sh" . }}   (after `set -eu`)
+# Use it from a script with the includeTemplate function and the name of this file, after `set -eu`.
+# See CLAUDE.md for the exact line. Never write the literal template action in this file:
+# chezmoi parses the whole file as a template, so it would include itself forever.
 # Process name and app name are assumed to be the same (true for Snapzy, Vicinae, Rectangle).
 #
 # All helpers are best-effort: they always return 0, so a restart problem can never
