@@ -1,17 +1,9 @@
 #!/bin/bash
 set -eu
+{{ includeTemplate "app-helpers.sh" . }}
 
 # Vicinae only scans its extensions folder at startup. Restart it when a pinned extension release changes
 # (the extensions are installed by .chezmoiexternal.toml.tmpl).
 # external hash: {{ include ".chezmoiexternal.toml.tmpl" | sha256sum }}
 
-if pgrep -x Vicinae >/dev/null 2>&1; then
-  echo "==> Restarting Vicinae to load extension changes..."
-  # pkill instead of an AppleScript quit: no Automation permission prompt, and nothing to save in a launcher
-  pkill -x Vicinae || true
-  for _ in $(seq 1 20); do
-    pgrep -x Vicinae >/dev/null 2>&1 || break
-    sleep 0.5
-  done
-  open -a Vicinae
-fi
+restart_app Vicinae
