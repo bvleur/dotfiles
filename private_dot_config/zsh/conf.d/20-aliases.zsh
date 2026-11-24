@@ -5,9 +5,7 @@
 #: [system config] open the chezmoi source repo in Zed
 alias dots='zed "$(chezmoi source-path)"'
 
-# note: shadows /usr/bin/cu (macOS's old UUCP serial "call up" tool); `command cu` still reaches it
-#: [system config] chezmoi update (pull the dotfiles repo and apply)
-alias cu='chezmoi update'
+# `cu` (chezmoi update) is a function in 40-reload.zsh: it reloads this shell when the zsh config changed.
 
 # --- modern replacements (only active when the tool exists) ---
 #: [files, more] cat with syntax highlighting (bat), no pager
