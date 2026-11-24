@@ -23,6 +23,13 @@
             "com.microsoft.m365copilot": { "shortcut": "super+control+shift+;" },
             "com.microsoft.teams2": { "shortcut": "super+control+Z" },
             "com.tinyspeck.slackmacgap": { "shortcut": "super+control+C" },
+{{- /* "Claude Private" is a Safari "Add to Dock" web app created by hand (File > Add to Dock). Its bundle id
+       (com.apple.Safari.WebApp.<UUID>) is random per Mac, so read it at apply time; skip silently if the app is missing. */}}
+{{- $claudePrivateInfo := joinPath .chezmoi.homeDir "Applications" "Claude Private.app" "Contents" "Info" }}
+{{- $claudePrivateId := output "sh" "-c" (printf "defaults read %q CFBundleIdentifier 2>/dev/null || true" $claudePrivateInfo) | trim }}
+{{- if $claudePrivateId }}
+            {{ $claudePrivateId | quote }}: { "shortcut": "super+control+alt+;" },
+{{- end }}
             "org.mozilla.firefox": { "shortcut": "super+control+B" },
 {{- else }}
             "com.apple.Safari": { "shortcut": "super+control+B" },
