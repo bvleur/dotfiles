@@ -1,0 +1,42 @@
+{{- if and (eq .chezmoi.os "darwin") .server -}}
+#!/bin/bash
+# Machine settings for a server / remote build Mac (only rendered when `server = true`; an empty script is skipped).
+# Needs sudo. Without a terminal (or without a password) it prints what to run instead and never fails `chezmoi apply`.
+# Re-runs only when this file changes, so after a skipped run use the printed command by hand.
+set -u
+
+commands=(
+  "pmset -a sleep 0"          # never sleep the system (display may still sleep)
+  "pmset -a disksleep 0"
+  "pmset -a womp 1"           # wake for network access
+  "pmset -a autorestart 1"    # start again after a power failure
+  "systemsetup -setremotelogin on"   # SSH; needs Full Disk Access for the terminal app
+)
+
+run_all() {
+  local failed=0 c
+  for c in "${commands[@]}"; do
+    if ! sudo ${c%%#*} >/dev/null 2>&1; then
+      echo "!! failed: sudo ${c%%#*}" >&2
+      failed=1
+    fi
+  done
+  return $failed
+}
+
+if [ -t 0 ] && sudo -v 2>/dev/null; then
+  echo "==> Applying server settings (no sleep, SSH on)..."
+  run_all || echo "!! Some settings failed (see above); SSH usually needs Full Disk Access for your terminal in System Settings > Privacy & Security."
+else
+  echo "!! No terminal or sudo available; run these yourself:"
+  for c in "${commands[@]}"; do echo "!!   sudo ${c%%#*}"; done
+fi
+
+cat <<'MSG'
+==> Manual steps for a server Mac (once):
+    1. Xcode:     xcodes install --latest   (asks for your Apple ID), then: sudo xcodebuild -license accept
+    2. GitHub:    gh auth login
+    3. Auto-login after a restart (optional): System Settings > Users & Groups > Automatically log in as.
+MSG
+exit 0
+{{- end }}

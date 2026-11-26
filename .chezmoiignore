@@ -4,3 +4,8 @@
 README.md
 CLAUDE.md
 install.sh
+
+# WireGuard client config: only on machines that answered yes to `vpn` (it reads secrets from 1Password).
+{{ if not (get . "vpn") }}
+.config/wireguard
+{{ end }}
