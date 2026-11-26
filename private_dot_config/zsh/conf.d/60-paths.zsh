@@ -5,3 +5,6 @@ _path_prepend() {
     *) PATH="$1:$PATH" ;;
   esac
 }
+
+# user scripts managed by chezmoi (app-check)
+_path_prepend "$HOME/.local/bin"

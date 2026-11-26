@@ -1,0 +1,15 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# After every `chezmoi apply` / `chezmoi update` (cu): warn about apps that are not fully set up on this Mac, e.g.
+# an app that still lacks its Accessibility permission. Prints nothing when everything is fine, and is warn-only:
+# it can never fail the apply. The same check, with the full report, is the `app-check` command (see `help apps`).
+# `run_after_` (not run_onchange_) on purpose: permissions are granted by hand, so the state changes without any
+# change in the repo, and the reminder must keep showing until it is fixed.
+set -u
+
+# the app-check file itself is applied just before this script runs
+if [ -x "$HOME/.local/bin/app-check" ]; then
+  "$HOME/.local/bin/app-check" --quiet || true
+fi
+exit 0
+{{- end }}
