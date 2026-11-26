@@ -80,7 +80,6 @@ cask "claude-code"   # Claude Code CLI
 brew "tmux"          # sessions that survive a dropped SSH connection
 brew "xcodes"        # install/switch Xcode versions from the command line (needs an Apple ID login once)
 brew "xcbeautify"    # readable xcodebuild output
-cask "tailscale-app"  # reach this machine from anywhere (SSH over the tailnet); sign in once from the menu bar
 {{- end }}
 
 
