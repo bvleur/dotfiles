@@ -26,7 +26,9 @@ and your account password, then connect again.
 
 1. UniFi Network > Settings > VPN > VPN Server > your WireGuard server: add a client for this machine, tick
    **Pre-shared key**, and download its `.conf` file. One client per machine, never a shared one.
-2. Answer yes to the VPN question: `chezmoi init --prompt` (keep the other answers).
+2. Answer yes to the VPN question: `chezmoi init`. It only asks what this machine has not answered yet.
+   To change an earlier answer: `chezmoi init --prompt` (needs a recent chezmoi; otherwise set `vpn = true`
+   under `[data]` with `chezmoi edit-config`).
 3. Sign in to 1Password on the command line (see above).
 4. Store the downloaded file in 1Password:
    - first machine: `wg-to-1password ~/Downloads/<file>.conf <home-subnet>`, e.g. `192.168.1.0/24`
