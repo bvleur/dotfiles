@@ -87,7 +87,8 @@ wg-to-1password() {
   # The first run creates the item and needs the home subnet (the AllowedIPs to route).
   # Nothing that is already in 1Password is replaced without showing what changes and asking first
   # (-f skips the question; without a terminal and without -f it refuses).
-  local vault=Private item="WireGuard Rozemarijn"
+  # The account is named on every op call, so a machine with a work account next to it never asks or picks wrong.
+  local account=vleur.1password.com vault=Private item="WireGuard Rozemarijn"
   local usage="usage: wg-to-1password [-m machine] [-f] <file.conf> [home-subnet, e.g. 192.168.1.0/24]"
   local -a mopt fopt
   zparseopts -D -E -F m:=mopt -machine:=mopt f=fopt -force=fopt 2>/dev/null || { print -u2 $usage; return 1 }
@@ -123,26 +124,26 @@ wg-to-1password() {
   local -a shared_fields=("server public key[text]=${val[public]}" "endpoint[text]=${val[endpoint]}")
   [[ -n $subnet ]] && shared_fields+=("allowed ips[text]=$subnet")
 
-  print -r -- "Storing ${conf:t} as machine \"$machine\" in \"$item\" (vault $vault)."
+  print -r -- "Storing ${conf:t} as machine \"$machine\" in \"$item\" (account $account, vault $vault)."
 
-  if ! command op item get "$item" --vault "$vault" >/dev/null 2>&1; then
+  if ! command op item get "$item" --account "$account" --vault "$vault" >/dev/null 2>&1; then
     [[ -n $subnet ]] || { print -u2 "wg-to-1password: \"$item\" does not exist yet, so the home subnet is needed: wg-to-1password $conf 192.168.1.0/24"; return 1 }
-    command op item create --category "Secure Note" --vault "$vault" --title "$item" $shared_fields $machine_fields >/dev/null || return 1
+    command op item create --account "$account" --category "Secure Note" --vault "$vault" --title "$item" $shared_fields $machine_fields >/dev/null || return 1
     print -r -- "Created \"$item\" with section \"$machine\"."
   else
     # What is there now. A field that does not exist yet reads as empty; filling it replaces nothing.
     local ref="op://$vault/$item" old
     local -a changes
-    old=$(command op read "$ref/$machine/private key" 2>/dev/null)
+    old=$(command op read --account "$account" "$ref/$machine/private key" 2>/dev/null)
     if [[ -n $old && $old != ${val[private]} ]]; then
-      changes+=("section \"$machine\" already holds another client (address $(command op read "$ref/$machine/address" 2>/dev/null)); this file has address ${val[address]}")
+      changes+=("section \"$machine\" already holds another client (address $(command op read --account "$account" "$ref/$machine/address" 2>/dev/null)); this file has address ${val[address]}")
     fi
-    old=$(command op read "$ref/server public key" 2>/dev/null)
+    old=$(command op read --account "$account" "$ref/server public key" 2>/dev/null)
     [[ -n $old && $old != ${val[public]} ]] && changes+=("server public key: $old -> ${val[public]}")
-    old=$(command op read "$ref/endpoint" 2>/dev/null)
+    old=$(command op read --account "$account" "$ref/endpoint" 2>/dev/null)
     [[ -n $old && $old != ${val[endpoint]} ]] && changes+=("endpoint: $old -> ${val[endpoint]}")
     if [[ -n $subnet ]]; then
-      old=$(command op read "$ref/allowed ips" 2>/dev/null)
+      old=$(command op read --account "$account" "$ref/allowed ips" 2>/dev/null)
       [[ -n $old && $old != $subnet ]] && changes+=("allowed ips: $old -> $subnet")
     fi
     if (( ${#changes} )); then
@@ -155,7 +156,7 @@ wg-to-1password() {
         print
       fi
     fi
-    command op item edit "$item" --vault "$vault" $shared_fields $machine_fields >/dev/null || return 1
+    command op item edit "$item" --account "$account" --vault "$vault" $shared_fields $machine_fields >/dev/null || return 1
     print -r -- "Updated \"$item\": section \"$machine\"."
   fi
   print -r -- "Next, on the machine \"$machine\": chezmoi apply, then import ~/.config/wireguard/home.conf in the WireGuard app."

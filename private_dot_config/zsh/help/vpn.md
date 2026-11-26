@@ -21,7 +21,8 @@ and your account password, then connect again.
    Quit the terminal with Cmd+Q and open it again. Without it `op` cannot read the app's settings and reports
    "No accounts configured" (`op --debug vault list` shows `settings.json: operation not permitted`).
 3. Run `op vault list`. Approve the prompt (Touch ID); it should list the `Private` vault.
-4. With more than one account on this machine, pick the personal one first: `op signin`.
+4. More than one account on this machine (work + personal) is fine: the VPN config and `wg-to-1password`
+   always use `vleur.1password.com`. For your own `op` commands add `--account vleur.1password.com`.
 
 `chezmoi apply` needs this whenever it renders the VPN config. A locked 1Password just prompts again.
 
@@ -50,7 +51,7 @@ and your account password, then connect again.
 - **`op` says "No accounts configured"** although the integration is on: the terminal lacks Full Disk Access
   (see above).
 - **`chezmoi apply` fails on `home.conf`**: 1Password is not signed in or the item is incomplete. Check with
-  `op read "op://Private/WireGuard Rozemarijn/endpoint"`.
+  `op read --account vleur.1password.com "op://Private/WireGuard Rozemarijn/endpoint"`.
 - **Changed the item or the template**: run `chezmoi apply`, then remove the tunnel in the WireGuard app and
   import the file again. The app keeps its own copy.
 - **Connected but the mini does not answer**: check that `allowed ips` in the item is the home subnet, and that
