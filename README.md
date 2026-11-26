@@ -28,7 +28,7 @@ Some configuration is machine-specific, controlled by the `purpose` variable. `c
 | `"bol"` | Work laptop — also installs bol-specific tools (JetBrains, gcloud, kubectx, …) |
 | `"home"` | Personal laptop — general tools only |
 
-On a `home` machine `chezmoi init` also asks `server` (yes/no). `server = true` adds server / remote-build extras on top of home (`tmux`, `xcodes`, `xcbeautify`, Tailscale, plus a `sudo` script that disables sleep and enables SSH and prints the manual steps: Tailscale login, Xcode via `xcodes`, `gh auth login`); everything else stays identical. It is always `false` for `bol`. Change an answer later with `chezmoi init --prompt`.
+On a `home` machine `chezmoi init` also asks `server` (yes/no). `server = true` adds server / remote-build extras on top of home (`tmux`, `xcodes`, `xcbeautify`, plus a `sudo` script that disables sleep and enables SSH and prints the manual steps: Xcode via `xcodes`, `gh auth login`); everything else stays identical. It is always `false` for `bol`. Change an answer later with `chezmoi init --prompt`.
 
 ---
 

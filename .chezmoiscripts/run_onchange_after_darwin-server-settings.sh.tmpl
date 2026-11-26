@@ -34,10 +34,9 @@ fi
 
 cat <<'MSG'
 ==> Manual steps for a server Mac (once):
-    1. Tailscale: open the app from the menu bar / Launchpad and sign in.
-    2. Xcode:     xcodes install --latest   (asks for your Apple ID), then: sudo xcodebuild -license accept
-    3. GitHub:    gh auth login
-    4. Auto-login after a restart (optional): System Settings > Users & Groups > Automatically log in as.
+    1. Xcode:     xcodes install --latest   (asks for your Apple ID), then: sudo xcodebuild -license accept
+    2. GitHub:    gh auth login
+    3. Auto-login after a restart (optional): System Settings > Users & Groups > Automatically log in as.
 MSG
 exit 0
 {{- end }}
