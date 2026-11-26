@@ -2,3 +2,4 @@
 .config/zsh/conf.d/39-help.zsh
 .config/zsh/conf.d/55-claude-cmd.zsh
 .config/claude-cmd/README.md
+.config/wireguard/home.conf

@@ -14,16 +14,19 @@
        Fill the item with `wg-to-1password [-m machine] <file.conf> [home-subnet]` (30-functions.zsh), not by hand.
        The WireGuard app keeps its own copy: after this file changes, re-import it
        (WireGuard > Import Tunnel(s) from File...). */ -}}
+{{- /* The account is named explicitly: on a machine with more than one 1Password account (work + personal)
+       `op` would otherwise stop and ask which one to use, without saying what for. */ -}}
+{{- $account := "vleur.1password.com" -}}
 {{- $item := "op://Private/WireGuard Rozemarijn" -}}
 {{- $machine := printf "%s/%s" $item .purpose -}}
 # Managed by chezmoi; secrets come from 1Password. Do not edit here.
 [Interface]
-PrivateKey = {{ onepasswordRead (printf "%s/private key" $machine) | trim }}
-Address = {{ onepasswordRead (printf "%s/address" $machine) | trim }}
+PrivateKey = {{ onepasswordRead (printf "%s/private key" $machine) $account | trim }}
+Address = {{ onepasswordRead (printf "%s/address" $machine) $account | trim }}
 
 [Peer]
-PublicKey = {{ onepasswordRead (printf "%s/server public key" $item) | trim }}
-PresharedKey = {{ onepasswordRead (printf "%s/preshared key" $machine) | trim }}
-Endpoint = {{ onepasswordRead (printf "%s/endpoint" $item) | trim }}
-AllowedIPs = {{ onepasswordRead (printf "%s/allowed ips" $item) | trim }}
+PublicKey = {{ onepasswordRead (printf "%s/server public key" $item) $account | trim }}
+PresharedKey = {{ onepasswordRead (printf "%s/preshared key" $machine) $account | trim }}
+Endpoint = {{ onepasswordRead (printf "%s/endpoint" $item) $account | trim }}
+AllowedIPs = {{ onepasswordRead (printf "%s/allowed ips" $item) $account | trim }}
 PersistentKeepalive = 25
