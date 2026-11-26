@@ -79,7 +79,7 @@ chezmoi init --apply https://github.com/bvleur/dotfiles.git
 |---|---|
 | `help` | Lists my custom aliases and functions by category (system config, files, git, ccd, then the rest). `help --all` also shows the rarely used ones, `help <text>` searches all. Descriptions are `#: [category] …` comment lines above each alias / function in `conf.d/*.zsh`; `#: [category, more] …` marks a rarely used one. Internal helpers get a leading `_` and stay hidden; `help --check` lists public names that still lack a description |
 | `dots` | Opens the chezmoi source directory in Zed |
-| `v <file>...` | Views files with the best installed viewer: `.md` via glow, `.docx` via doxx (same as the yazi previews), `.json` via jless, `.csv`/`.tsv` via csvlens, binary files via hexyl, directories via eza, everything else via bat (falls back to `less`) |
+| `v <file>...` | Views files with the best installed viewer: `.md` via glow, `.docx` via doxx (same as the yazi previews), `.json` via jless, `.csv`/`.tsv` via csvlens, binary files via hexyl, directories via your `ls` alias (`ls -l`), everything else via bat (falls back to `less`); `v --help` lists the table |
 | `ccd-prefs` | Edit the ccd preferences (preferred CLI tools, long-form options) through chezmoi |
 | `chezmoi edit <file>` | Edit a dotfile through chezmoi |
 | `chezmoi apply` | Apply changes to the system |
