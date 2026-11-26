@@ -81,7 +81,7 @@ v() {
 #: [system config, more] store a UniFi WireGuard client .conf in 1Password for the chezmoi-managed VPN config: wg-to-1password [-m machine] <file.conf> [home-subnet]
 wg-to-1password() {
   emulate -L zsh
-  # Fills the item that private_dot_config/private_wireguard/private_home.conf.tmpl reads: shared fields plus one
+  # Fills the item that private_dot_config/private_wireguard/private_rozemarijn.conf.tmpl reads: shared fields plus one
   # section per machine. The section is this machine's chezmoi `purpose` unless -m names another one, so a .conf
   # for the other laptop can be stored from here: wg-to-1password -m bol <file.conf>.
   # The first run creates the item and needs the home subnet (the AllowedIPs to route).
@@ -159,6 +159,6 @@ wg-to-1password() {
     command op item edit "$item" --account "$account" --vault "$vault" $shared_fields $machine_fields >/dev/null || return 1
     print -r -- "Updated \"$item\": section \"$machine\"."
   fi
-  print -r -- "Next, on the machine \"$machine\": chezmoi apply, then import ~/.config/wireguard/home.conf in the WireGuard app."
+  print -r -- "Next, on the machine \"$machine\": chezmoi apply, then import ~/.config/wireguard/rozemarijn.conf in the WireGuard app."
   print -r -- "The private key is now in 1Password: delete $conf."
 }

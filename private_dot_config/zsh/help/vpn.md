@@ -5,7 +5,7 @@ The config is rendered by chezmoi; every secret lives in 1Password (item `WireGu
 
 ## Connect (daily use)
 
-1. Click the WireGuard icon in the menu bar and pick the `home` tunnel, or open the WireGuard app and press
+1. Click the WireGuard icon in the menu bar and pick the `rozemarijn` tunnel, or open the WireGuard app and press
    **Activate**.
 2. Reach the Mac mini by its home address: `ssh <user>@<mini-ip>`, or Screen Sharing with `open vnc://<mini-ip>`.
 3. Disconnect the same way (**Deactivate**).
@@ -42,15 +42,15 @@ and your account password, then connect again.
    Each machine has its own section in the item (`bol`, `home`). The command says which section it writes, and
    asks before it replaces anything that is already there.
 5. Delete the downloaded `.conf`: it contains this machine's private key.
-6. `chezmoi apply` installs the WireGuard app and writes `~/.config/wireguard/home.conf`.
-7. WireGuard app > **Import Tunnel(s) from File...** > `~/.config/wireguard/home.conf`, and allow the VPN
+6. `chezmoi apply` installs the WireGuard app and writes `~/.config/wireguard/rozemarijn.conf`.
+7. WireGuard app > **Import Tunnel(s) from File...** > `~/.config/wireguard/rozemarijn.conf`, and allow the VPN
    configuration when macOS asks.
 
 ## When something is off
 
 - **`op` says "No accounts configured"** although the integration is on: the terminal lacks Full Disk Access
   (see above).
-- **`chezmoi apply` fails on `home.conf`**: 1Password is not signed in or the item is incomplete. Check with
+- **`chezmoi apply` fails on `rozemarijn.conf`**: 1Password is not signed in or the item is incomplete. Check with
   `op read --account vleur.1password.com "op://Private/WireGuard Rozemarijn/endpoint"`.
 - **Changed the item or the template**: run `chezmoi apply`, then remove the tunnel in the WireGuard app and
   import the file again. The app keeps its own copy.
