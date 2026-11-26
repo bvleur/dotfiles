@@ -17,8 +17,11 @@ and your account password, then connect again.
 ## Sign in to 1Password on the command line
 
 1. Open the 1Password app > Settings > Developer and turn on **Integrate with 1Password CLI**.
-2. Run `op vault list`. Approve the prompt (Touch ID); it should list the `Private` vault.
-3. With more than one account on this machine, pick the personal one first: `op signin`.
+2. Give your terminal app (Ghostty) **Full Disk Access**: System Settings > Privacy & Security > Full Disk Access.
+   Quit the terminal with Cmd+Q and open it again. Without it `op` cannot read the app's settings and reports
+   "No accounts configured" (`op --debug vault list` shows `settings.json: operation not permitted`).
+3. Run `op vault list`. Approve the prompt (Touch ID); it should list the `Private` vault.
+4. With more than one account on this machine, pick the personal one first: `op signin`.
 
 `chezmoi apply` needs this whenever it renders the VPN config. A locked 1Password just prompts again.
 
@@ -44,6 +47,8 @@ and your account password, then connect again.
 
 ## When something is off
 
+- **`op` says "No accounts configured"** although the integration is on: the terminal lacks Full Disk Access
+  (see above).
 - **`chezmoi apply` fails on `home.conf`**: 1Password is not signed in or the item is incomplete. Check with
   `op read "op://Private/WireGuard Rozemarijn/endpoint"`.
 - **Changed the item or the template**: run `chezmoi apply`, then remove the tunnel in the WireGuard app and
