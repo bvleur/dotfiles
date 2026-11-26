@@ -6,7 +6,14 @@
 {{- if eq $purpose "home" -}}
 {{-   $server = promptBoolOnce . "server" "Is this also a server / remote build machine" -}}
 {{- end -}}
+{{- /* `vpn` renders the WireGuard client config for the home network; its secrets come from 1Password at apply time.
+       Not asked on the server: that machine is already at home. */ -}}
+{{- $vpn := false -}}
+{{- if not $server -}}
+{{-   $vpn = promptBoolOnce . "vpn" "Set up the home WireGuard VPN client (needs a signed-in 1Password CLI)" false -}}
+{{- end -}}
 
 [data]
     purpose = {{ $purpose | quote }}
     server = {{ $server }}
+    vpn = {{ $vpn }}

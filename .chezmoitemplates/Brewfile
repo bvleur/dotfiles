@@ -97,3 +97,6 @@ mas "1Password for Safari",       id: 1569813296
 mas "Reeder",                     id: 1529448980
 #mas "Slack",                     id: 803453959
 mas "Amphetamine",                id: 937984704
+{{- if get . "vpn" }}
+mas "WireGuard",                  id: 1451685025   # menu bar VPN client; import ~/.config/wireguard/home.conf once
+{{- end }}
