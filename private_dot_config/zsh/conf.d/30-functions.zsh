@@ -87,7 +87,7 @@ wg-to-1password() {
   # The first run creates the item and needs the home subnet (the AllowedIPs to route).
   # Nothing that is already in 1Password is replaced without showing what changes and asking first
   # (-f skips the question; without a terminal and without -f it refuses).
-  local vault=Private item="WireGuard Bram"
+  local vault=Private item="WireGuard Rozemarijn"
   local usage="usage: wg-to-1password [-m machine] [-f] <file.conf> [home-subnet, e.g. 192.168.1.0/24]"
   local -a mopt fopt
   zparseopts -D -E -F m:=mopt -machine:=mopt f=fopt -force=fopt 2>/dev/null || { print -u2 $usage; return 1 }

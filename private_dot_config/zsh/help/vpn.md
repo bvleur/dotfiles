@@ -1,7 +1,7 @@
 # VPN to the home network
 
 WireGuard to the UniFi gateway at home. Only traffic for the home subnet goes through the tunnel.
-The config is rendered by chezmoi; every secret lives in 1Password (item `WireGuard Bram`, vault `Private`).
+The config is rendered by chezmoi; every secret lives in 1Password (item `WireGuard Rozemarijn`, vault `Private`).
 
 ## Connect (daily use)
 
@@ -45,7 +45,7 @@ and your account password, then connect again.
 ## When something is off
 
 - **`chezmoi apply` fails on `home.conf`**: 1Password is not signed in or the item is incomplete. Check with
-  `op read "op://Private/WireGuard Bram/endpoint"`.
+  `op read "op://Private/WireGuard Rozemarijn/endpoint"`.
 - **Changed the item or the template**: run `chezmoi apply`, then remove the tunnel in the WireGuard app and
   import the file again. The app keeps its own copy.
 - **Connected but the mini does not answer**: check that `allowed ips` in the item is the home subnet, and that
