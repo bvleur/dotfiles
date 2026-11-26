@@ -1,3 +1,6 @@
 # Built-in Gruvbox themes; Ghostty switches with the macOS light/dark appearance. They set the 16 ANSI colours, so every
 # tool that uses plain terminal colours (eza, lazygit, fzf, csvlens, ...) follows automatically, in light and dark.
 theme = light:Gruvbox Light,dark:Gruvbox Dark
+
+# Same coding font as Zed and IntelliJ (installed via the Brewfile); icons (eza, yazi, lazygit) come from Ghostty's built-in Nerd Font symbols
+font-family = JetBrains Mono

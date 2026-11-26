@@ -48,6 +48,7 @@ brew "lazygit"       # git TUI (invoked directly by LazyVim <leader>gg)
 # === GUI apps ===
 cask "homebrew-app"
 cask "ghostty"
+cask "font-jetbrains-mono"   # the one coding font everywhere (Ghostty, Zed; IntelliJ ships it). Nerd Font icons come from Ghostty's built-in symbols
 cask "zen"             # Zen browser (Firefox-based), the default browser
 cask "google-chrome"   # stable Chrome, only as a test browser (never default, see chrome-defaults script)
 cask "zed"
