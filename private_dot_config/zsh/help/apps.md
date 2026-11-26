@@ -30,6 +30,10 @@ Some apps need a restart after you grant Accessibility or Screen Recording.
 - Permissions are read from macOS's privacy database (TCC). That only works when the terminal you run it in has
   **Full Disk Access**. Without it, `app-check` says so and skips the permission checks; it never claims
   that something is missing when it simply cannot look.
+- A permission that has no row in the system database is reported as `?` (cannot verify), not as missing: some
+  grants (seen with Rectangle) do not show up there although System Settings shows them as on. A row that says
+  "off" is reliable and is reported as a problem. Only when the per-user database can be read too does "no row"
+  count as "not granted yet".
 - Camera, microphone, calendars, contacts and Automation cannot be read reliably from a script, so they are only
   listed as reminders in the full `app-check` report.
 - Login items (start at login) cannot be read without an admin prompt, so they are not checked.
