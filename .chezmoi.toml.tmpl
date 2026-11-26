@@ -1,5 +1,5 @@
 {{- /* Asked once by `chezmoi init`; the answers are kept in ~/.config/chezmoi/chezmoi.toml.
-       Re-ask with `chezmoi init --prompt`. */ -}}
+       A new question is asked by the next plain `chezmoi init`; re-ask all with `chezmoi init --prompt`. */ -}}
 {{- $purpose := promptChoiceOnce . "purpose" "What type of machine is this" (list "home" "bol") -}}
 {{- /* `server` layers server / remote-build extras (Xcode tooling, tmux, ...) on top of the home profile. */ -}}
 {{- $server := false -}}

@@ -1,5 +1,5 @@
 {{- /* WireGuard client config for the home network (UniFi VPN server). Nothing secret lives in this repo:
-       every value is read from 1Password at `chezmoi apply`, from one item: op://Private/WireGuard Bram
+       every value is read from 1Password at `chezmoi apply`, from one item: op://Private/WireGuard Rozemarijn
        (no brackets or other punctuation in names: 1Password secret references do not allow them).
        Each machine is its own UniFi client with its own keys, so the item has
          shared fields (no section):
@@ -11,10 +11,10 @@
            private key        [Interface] PrivateKey
            address            [Interface] Address
            preshared key      [Peer] PresharedKey (tick "Pre-shared key" for the client in UniFi)
-       Fill the item with `wg-to-1password <file.conf> [home-subnet]` (30-functions.zsh) instead of by hand.
+       Fill the item with `wg-to-1password [-m machine] <file.conf> [home-subnet]` (30-functions.zsh), not by hand.
        The WireGuard app keeps its own copy: after this file changes, re-import it
        (WireGuard > Import Tunnel(s) from File...). */ -}}
-{{- $item := "op://Private/WireGuard Bram" -}}
+{{- $item := "op://Private/WireGuard Rozemarijn" -}}
 {{- $machine := printf "%s/%s" $item .purpose -}}
 # Managed by chezmoi; secrets come from 1Password. Do not edit here.
 [Interface]
