@@ -12,6 +12,9 @@
 # plain `help` ends with a warning when there are any, so a new alias or function can't silently stay out.
 # Loaded after the plugins (50) on purpose: zephyr's utility plugin does `alias help=run-help`, which would
 # otherwise win over this function.
+#
+# Guides: a longer how-to lives in ../help/<topic>.md and is shown by `help <topic>` (e.g. `help vpn`), above the
+# commands that match the same word. Plain `help` lists the available guides at the bottom.
 unalias help 2>/dev/null
 
 (( ${+HELP_CATEGORIES} )) || typeset -ga HELP_CATEGORIES=('system config' files git ccd)
@@ -42,7 +45,17 @@ _help_row() {
   fi
 }
 
-#: [more] my aliases and functions by category; help --all also shows rarely used ones, help <text> searches all
+# A guide, rendered like `v` renders markdown (glow when installed and on a terminal), plain text otherwise.
+_help_guide() {
+  emulate -L zsh
+  if (( ${_DRIFT_TTY:-0} )) && (( $+commands[glow] )); then
+    CLICOLOR_FORCE=1 command glow -w=${COLUMNS:-80} -s=dark -- "$1"
+  else
+    command cat -- "$1"
+  fi
+}
+
+#: [more] my aliases and functions by category; help --all also shows rarely used ones, help <text> searches all, help <topic> shows a guide (help vpn)
 help() {
   emulate -L zsh
   local _DRIFT_TTY; _drift_tty
@@ -61,6 +74,10 @@ help() {
     esac
   done
   [[ -n $want ]] && all=1   # searching looks through everything
+
+  # a guide with exactly this name comes first; the matching commands follow below it
+  local guides=${ZDOTDIR:-$HOME/.config/zsh}/help guide=
+  [[ -n $want && $want != */* && -r $guides/${want:l}.md ]] && guide=$guides/${want:l}.md
 
   # one row per entry: kind \t name \t category \t more(0/1) \t description; or missing \t name \t file
   local -a rows
@@ -115,6 +132,11 @@ help() {
     return 0
   fi
 
+  if [[ -n $guide ]]; then
+    _help_guide $guide
+    print ""
+  fi
+
   # category order: HELP_CATEGORIES, then the others alphabetically, then "other"
   local -a f cats extra
   for row in $rows; do
@@ -130,7 +152,7 @@ help() {
       f=("${(@ps:\t:)row}")
       [[ ${f[3]} == $cat ]] || continue
       kind=${f[1]} name=${f[2]} desc=${f[5]}
-      [[ -n $want && ${name}${desc} != *${~${(b)want}}* ]] && continue
+      [[ -n $want && ${(L)name}${(L)desc} != *${~${(b)want:l}}* ]] && continue   # case-insensitive
       if (( f[4] && ! all )); then
         (( hidden++ ))
         continue
@@ -148,13 +170,15 @@ help() {
       shown=1
     done
   done
-  (( shown )) || print -r -- "nothing found${want:+ for '$want'}"
+  (( shown )) || [[ -n $guide ]] || print -r -- "nothing found${want:+ for '$want'}"
   if (( ${#missing} )); then
     print ""
     print -r -- "$(_drift_c yellow)! ${#missing} without a description (not listed): help --check$(_drift_c reset)"
   fi
   _drift_note ""
   (( hidden )) && _drift_note "$hidden rarely used ones hidden: help --all"
+  local -a topics=($guides/*.md(N:t:r))
+  [[ -z $want ]] && (( ${#topics} )) && _drift_note "guides: help ${(j:, help :)topics}"
   local note
   for note in "${(@f)$(print -r -- "Add your own: a '#: [category] description' line above an alias or function in $dir/*.zsh" | fold -s -w $(( ${COLUMNS:-80} > 8 ? ${COLUMNS:-80} - 4 : 4 )))}"; do
     _drift_note ${note%% #}
