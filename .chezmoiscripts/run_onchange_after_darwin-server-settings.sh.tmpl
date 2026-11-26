@@ -32,11 +32,26 @@ else
   for c in "${commands[@]}"; do echo "!!   sudo ${c%%#*}"; done
 fi
 
+# Screen Sharing is only checked, not switched on: turned on from the command line, macOS (12.1 and later) allows
+# viewing but not controlling the screen. Switching it on once in System Settings gives full control.
+if /usr/bin/nc -z -G 1 127.0.0.1 5900 >/dev/null 2>&1; then
+  echo "==> Screen Sharing is on."
+else
+  cat <<'MSG'
+!! Screen Sharing is off. Turn it on once at this Mac:
+!!   System Settings > General > Sharing > Screen Sharing (leave "Anyone may request permission" off).
+!! Then connect from another Mac with `open vnc://<this-mac>` and log in with your own account: nobody has to
+!! accept anything at this Mac.
+MSG
+fi
+
 cat <<'MSG'
 ==> Manual steps for a server Mac (once):
     1. Xcode:     xcodes install --latest   (asks for your Apple ID), then: sudo xcodebuild -license accept
     2. GitHub:    gh auth login
-    3. Auto-login after a restart (optional): System Settings > Users & Groups > Automatically log in as.
+    3. After a restart with FileVault on, the disk has to be unlocked before Screen Sharing works. On macOS 26
+       or later with Ethernet: ssh in with your account password to unlock, then reconnect.
+       Without FileVault: System Settings > Users & Groups > Automatically log in as.
 MSG
 exit 0
 {{- end }}

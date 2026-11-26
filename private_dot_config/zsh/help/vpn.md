@@ -10,6 +10,10 @@ The config is rendered by chezmoi; every secret lives in 1Password (item `WireGu
 2. Reach the Mac mini by its home address: `ssh <user>@<mini-ip>`, or Screen Sharing with `open vnc://<mini-ip>`.
 3. Disconnect the same way (**Deactivate**).
 
+Screen Sharing asks for your own account name and password on the mini; nobody has to accept anything there.
+After a restart of the mini the disk is still locked (FileVault): unlock it first with `ssh <user>@<mini-ip>`
+and your account password, then connect again.
+
 ## Sign in to 1Password on the command line
 
 1. Open the 1Password app > Settings > Developer and turn on **Integrate with 1Password CLI**.
