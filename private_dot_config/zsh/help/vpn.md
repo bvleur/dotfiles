@@ -30,9 +30,13 @@ and your account password, then connect again.
    To change an earlier answer: `chezmoi init --prompt` (needs a recent chezmoi; otherwise set `vpn = true`
    under `[data]` with `chezmoi edit-config`).
 3. Sign in to 1Password on the command line (see above).
-4. Store the downloaded file in 1Password:
+4. Store the downloaded file in 1Password, on the machine the file is for:
    - first machine: `wg-to-1password ~/Downloads/<file>.conf <home-subnet>`, e.g. `192.168.1.0/24`
    - any later machine: `wg-to-1password ~/Downloads/<file>.conf`
+   - a file for another machine than the one you are on: add `-m bol` or `-m home`
+
+   Each machine has its own section in the item (`bol`, `home`). The command says which section it writes, and
+   asks before it replaces anything that is already there.
 5. Delete the downloaded `.conf`: it contains this machine's private key.
 6. `chezmoi apply` installs the WireGuard app and writes `~/.config/wireguard/home.conf`.
 7. WireGuard app > **Import Tunnel(s) from File...** > `~/.config/wireguard/home.conf`, and allow the VPN

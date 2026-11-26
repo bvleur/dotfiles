@@ -78,19 +78,29 @@ v() {
   return $rc
 }
 
-#: [system config, more] store a UniFi WireGuard client .conf in 1Password for the chezmoi-managed VPN config: wg-to-1password <file.conf> [home-subnet]
+#: [system config, more] store a UniFi WireGuard client .conf in 1Password for the chezmoi-managed VPN config: wg-to-1password [-m machine] <file.conf> [home-subnet]
 wg-to-1password() {
   emulate -L zsh
-  # Fills the item that private_dot_config/private_wireguard/private_home.conf.tmpl reads: shared fields plus a
-  # section for this machine (named after its chezmoi `purpose`). Run it once per machine with that machine's
-  # own .conf from UniFi. The first run creates the item and needs the home subnet (the AllowedIPs to route).
+  # Fills the item that private_dot_config/private_wireguard/private_home.conf.tmpl reads: shared fields plus one
+  # section per machine. The section is this machine's chezmoi `purpose` unless -m names another one, so a .conf
+  # for the other laptop can be stored from here: wg-to-1password -m bol <file.conf>.
+  # The first run creates the item and needs the home subnet (the AllowedIPs to route).
+  # Nothing that is already in 1Password is replaced without showing what changes and asking first
+  # (-f skips the question; without a terminal and without -f it refuses).
   local vault=Private item="WireGuard Bram"
-  (( $# == 1 || $# == 2 )) || { print -u2 "usage: wg-to-1password <file.conf> [home-subnet, e.g. 192.168.1.0/24]"; return 1 }
-  local conf=$1 subnet=${2:-}
+  local usage="usage: wg-to-1password [-m machine] [-f] <file.conf> [home-subnet, e.g. 192.168.1.0/24]"
+  local -a mopt fopt
+  zparseopts -D -E -F m:=mopt -machine:=mopt f=fopt -force=fopt 2>/dev/null || { print -u2 $usage; return 1 }
+  (( $# == 1 || $# == 2 )) || { print -u2 $usage; return 1 }
+  local conf=$1 subnet=${2:-} force=${#fopt}
   [[ -r $conf ]] || { print -u2 "wg-to-1password: cannot read $conf"; return 1 }
   (( $+commands[op] )) || { print -u2 "wg-to-1password: op not installed (brew install --cask 1password-cli)"; return 1 }
-  local machine; machine=$(command chezmoi execute-template '{{ .purpose }}') && [[ -n $machine ]] \
-    || { print -u2 "wg-to-1password: cannot read purpose from chezmoi"; return 1 }
+  local machine=${mopt[-1]:-}
+  if [[ -z $machine ]]; then
+    machine=$(command chezmoi execute-template '{{ .purpose }}') && [[ -n $machine ]] \
+      || { print -u2 "wg-to-1password: cannot read purpose from chezmoi; name the machine with -m"; return 1 }
+  fi
+  [[ $machine =~ '^[A-Za-z0-9_-]+$' ]] || { print -u2 "wg-to-1password: machine name '$machine' may only contain letters, digits, - and _"; return 1 }
 
   # value of the first `Key = value` line (keys are unique in a single-peer client config)
   local -A want=(private PrivateKey address Address public PublicKey endpoint Endpoint psk PresharedKey)
@@ -113,14 +123,41 @@ wg-to-1password() {
   local -a shared_fields=("server public key[text]=${val[public]}" "endpoint[text]=${val[endpoint]}")
   [[ -n $subnet ]] && shared_fields+=("allowed ips[text]=$subnet")
 
-  if command op item get "$item" --vault "$vault" >/dev/null 2>&1; then
-    command op item edit "$item" --vault "$vault" $shared_fields $machine_fields >/dev/null || return 1
-    print -r -- "Updated \"$item\": section \"$machine\"${subnet:+ and allowed ips}."
-  else
+  print -r -- "Storing ${conf:t} as machine \"$machine\" in \"$item\" (vault $vault)."
+
+  if ! command op item get "$item" --vault "$vault" >/dev/null 2>&1; then
     [[ -n $subnet ]] || { print -u2 "wg-to-1password: \"$item\" does not exist yet, so the home subnet is needed: wg-to-1password $conf 192.168.1.0/24"; return 1 }
     command op item create --category "Secure Note" --vault "$vault" --title "$item" $shared_fields $machine_fields >/dev/null || return 1
-    print -r -- "Created \"$item\" in vault $vault with section \"$machine\"."
+    print -r -- "Created \"$item\" with section \"$machine\"."
+  else
+    # What is there now. A field that does not exist yet reads as empty; filling it replaces nothing.
+    local ref="op://$vault/$item" old
+    local -a changes
+    old=$(command op read "$ref/$machine/private key" 2>/dev/null)
+    if [[ -n $old && $old != ${val[private]} ]]; then
+      changes+=("section \"$machine\" already holds another client (address $(command op read "$ref/$machine/address" 2>/dev/null)); this file has address ${val[address]}")
+    fi
+    old=$(command op read "$ref/server public key" 2>/dev/null)
+    [[ -n $old && $old != ${val[public]} ]] && changes+=("server public key: $old -> ${val[public]}")
+    old=$(command op read "$ref/endpoint" 2>/dev/null)
+    [[ -n $old && $old != ${val[endpoint]} ]] && changes+=("endpoint: $old -> ${val[endpoint]}")
+    if [[ -n $subnet ]]; then
+      old=$(command op read "$ref/allowed ips" 2>/dev/null)
+      [[ -n $old && $old != $subnet ]] && changes+=("allowed ips: $old -> $subnet")
+    fi
+    if (( ${#changes} )); then
+      print -r -- "This replaces what is in 1Password now:"
+      print -rl -- "  - "${^changes}
+      [[ ${changes[1]} == section* ]] && print -r -- "  A file for another machine? Name it: wg-to-1password -m <machine> ${conf:t}"
+      if (( ! force )); then
+        [[ -t 0 ]] || { print -u2 "wg-to-1password: not replacing without a terminal to ask on; use -f to replace anyway"; return 1 }
+        read -q "?Replace? [y/N] " || { print; print -r -- "Nothing changed."; return 1 }
+        print
+      fi
+    fi
+    command op item edit "$item" --vault "$vault" $shared_fields $machine_fields >/dev/null || return 1
+    print -r -- "Updated \"$item\": section \"$machine\"."
   fi
-  print -r -- "Next: chezmoi apply, then import ~/.config/wireguard/home.conf in the WireGuard app."
+  print -r -- "Next, on the machine \"$machine\": chezmoi apply, then import ~/.config/wireguard/home.conf in the WireGuard app."
   print -r -- "The private key is now in 1Password: delete $conf."
 }
