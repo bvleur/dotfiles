@@ -1,6 +1,22 @@
 #: [files] mkdir -p a directory and cd into it
 mkcd() { mkdir -p "$1" && cd "$1"; }
 
+#: [files] cd into the shallowest subdirectory with this name, skipping node_modules, .git, build caches etc. (bfs): cdn <name>
+cdn() {
+  emulate -L zsh
+  (( $# == 1 )) || { print -u2 "usage: cdn <dirname>"; return 1 }
+  (( $+commands[bfs] )) || { print -u2 "cdn: bfs not installed (brew install bfs)"; return 1 }
+  # bfs searches breadth-first, so the first hit is the least nested one and -quit stops right there.
+  # Noise directories are pruned (-exclude), except one that was asked for by name (`cdn build` still works).
+  local -a noise=(node_modules .git .hg .svn vendor target build dist out .next .nuxt .cache .venv venv __pycache__ .gradle .idea .terraform Pods DerivedData)
+  noise=(${noise:#$1})
+  local -a prune=(-name ${noise[1]})
+  local n; for n in ${noise[2,-1]}; do prune+=(-o -name $n); done
+  local dir; dir=$(command bfs . -exclude \( $prune \) -type d -name "$1" -print -quit 2>/dev/null)
+  [[ -n $dir ]] || { print -u2 "cdn: no directory named '$1' below $PWD"; return 1 }
+  builtin cd -- "$dir"
+}
+
 #: [files] yazi file manager that cd's to the last directory on exit
 y() {
   local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd

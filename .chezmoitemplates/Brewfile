@@ -31,6 +31,7 @@ cask "1password-cli"
 
 # === Modern CLI replacements ===
 brew "ripgrep"       # grep replacement (rg); nvim/fzf search backend
+brew "bfs"           # find replacement that searches breadth-first (used by cdn: shallowest match first)
 brew "fd"            # find replacement; fzf/nvim find-files backend (respects .gitignore)
 brew "eza"           # ls replacement (icons / git status)
 
