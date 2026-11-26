@@ -1,0 +1,4 @@
+# Catppuccin flavors (installed by run_onchange_after_darwin-yazi-plugins); yazi picks one by the system appearance
+[flavor]
+dark  = "catppuccin-mocha"
+light = "catppuccin-latte"

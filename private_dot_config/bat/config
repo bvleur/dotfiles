@@ -1,1 +1,5 @@
 --style=plain
+# Catppuccin (same palette as yazi and Ghostty); bat follows the macOS light/dark appearance
+--theme=auto:system
+--theme-dark="Catppuccin Mocha"
+--theme-light="Catppuccin Latte"

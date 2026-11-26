@@ -1,0 +1,2 @@
+# Built-in Catppuccin themes; Ghostty switches with the macOS light/dark appearance
+theme = light:Catppuccin Latte,dark:Catppuccin Mocha
