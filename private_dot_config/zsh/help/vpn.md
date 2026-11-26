@@ -54,6 +54,8 @@ Only `vpn-config` and `wg-to-1password` need this, not `chezmoi apply`. A locked
   (see above).
 - **`vpn-config` cannot read from 1Password**: it lists what to check. "cannot setup session" means the app is
   locked, not running, or needs a restart.
+- **Is the config there at all?** `chezmoi-drift` (or `vpn-drift`) warns when `vpn = true` but the file is
+  missing. It never reads 1Password, so it cannot tell whether an existing file is outdated: `vpn-config` can.
 - **Changed the item**: run `vpn-config`, then remove the tunnel in the WireGuard app and import the file again.
   The app keeps its own copy.
 - **Connected but the mini does not answer**: check that `allowed ips` in the item is the home subnet, and that

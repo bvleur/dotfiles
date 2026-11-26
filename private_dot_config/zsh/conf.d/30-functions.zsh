@@ -236,3 +236,22 @@ PersistentKeepalive = 25"
     print -r -- "Next: WireGuard app > Import Tunnel(s) from File... > $shown"
   fi
 }
+
+#: [system config, more] VPN config: is the WireGuard config there on a machine that uses the VPN (offline check, part of chezmoi-drift)
+vpn-drift() {
+  emulate -L zsh
+  # Deliberately offline: it never reads 1Password, so it is safe in chezmoi-drift. It only notices a missing
+  # file. Whether an existing file still matches the item is what `vpn-config` itself tells you.
+  local _DRIFT_TTY; _drift_tty
+  _drift_header "VPN config"
+  local vpn; vpn=$(command chezmoi execute-template '{{ get . "vpn" }}' 2>/dev/null)
+  if [[ $vpn != true ]]; then
+    _drift_ok "not used on this machine (vpn is not true: chezmoi cat-config)"
+  elif [[ -s $HOME/.config/wireguard/rozemarijn.conf ]]; then
+    _drift_ok "~/.config/wireguard/rozemarijn.conf is there"
+    _drift_note "not compared with 1Password here; vpn-config does that and says \"up to date\" or rewrites it"
+  else
+    _drift_item '!' "vpn = true, but ~/.config/wireguard/rozemarijn.conf is missing"
+    _drift_fix "vpn-config" "write it from 1Password (setup: help vpn)"
+  fi
+}
