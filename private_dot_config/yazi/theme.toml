@@ -1,0 +1,4 @@
+# Gruvbox flavors (community, installed by run_onchange_after_darwin-yazi-plugins); yazi picks one by the system appearance
+[flavor]
+dark  = "gruvbox-dark"
+light = "gruvbox-light"

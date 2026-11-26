@@ -15,6 +15,7 @@
 #
 # Changing the setup: edit the JSON, or set it up in Rectangle's settings and use Export to get the values.
 set -eu
+{{ includeTemplate "app-helpers.sh" . }}
 
 DOMAIN=com.knollsoft.Rectangle
 
@@ -39,11 +40,7 @@ DEFAULT_BOUND_ACTIONS="leftHalf rightHalf topHalf bottomHalf topLeft topRight bo
 was_running=0
 if pgrep -x Rectangle >/dev/null 2>&1; then
   was_running=1
-  pkill -x Rectangle || true
-  for _ in $(seq 1 20); do
-    pgrep -x Rectangle >/dev/null 2>&1 || break
-    sleep 0.5
-  done
+  stop_app Rectangle
 fi
 
 echo "==> Applying Rectangle preferences"
@@ -77,5 +74,5 @@ for alias in leftSide rightSide bottomSide topSide centerSection; do
 done
 
 # Start (or restart) Rectangle. On first launch macOS asks for Accessibility access: grant it once per Mac.
-open -a Rectangle
+start_app Rectangle
 [ "$was_running" = 1 ] && echo "==> Rectangle restarted" || echo "==> Rectangle started"
