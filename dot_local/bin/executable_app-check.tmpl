@@ -1,0 +1,142 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+# app-check — warn about apps from the Brewfile that are not fully set up on this Mac. Managed by chezmoi.
+#
+#   app-check            full report (what is fine, what is missing, what has to be checked by hand)
+#   app-check --quiet    only the problems, nothing at all when everything is fine (used after `chezmoi apply`)
+#
+# Checks, per app: installed, and the privacy permissions it needs (Accessibility, Screen Recording, Full Disk
+# Access), read from macOS's TCC databases. Those databases are only readable when the terminal running this has
+# Full Disk Access; without it the permission checks are skipped with one note, never reported as missing.
+# Camera, microphone, calendars and Automation live in the per-user database, which macOS often keeps closed to
+# scripts, so they appear as manual reminders in the full report only.
+#
+# Warn-only: always exits 0, so it can never fail `chezmoi apply`. The app list below is rendered per machine
+# (purpose / vpn flag); see `help apps`.
+set -u
+
+quiet=0
+[ "${1-}" = "--quiet" ] && quiet=1
+
+if [ -t 1 ] && [ -z "${NO_COLOR-}" ]; then
+  red=$'\e[31m'; green=$'\e[32m'; yellow=$'\e[33m'; cyan=$'\e[36m'; dim=$'\e[2m'; bold=$'\e[1m'; reset=$'\e[0m'
+else
+  red=; green=; yellow=; cyan=; dim=; bold=; reset=
+fi
+
+# name | .app name | bundle id (the TCC "client") | permissions it needs, space separated
+APPS='
+LinearMouse|LinearMouse|com.lujjjh.LinearMouse|Accessibility
+Rectangle|Rectangle|com.knollsoft.Rectangle|Accessibility
+Vicinae|Vicinae|com.vicinaehq.Vicinae|Accessibility AllFiles
+Snapzy|Snapzy|com.trongduong.snapzy|ScreenCapture
+Ghostty|Ghostty|com.mitchellh.ghostty|AllFiles
+{{- if get . "vpn" }}
+WireGuard|WireGuard|com.wireguard.macos|
+{{- end }}
+'
+
+# Read the TCC databases: lines "service|client|auth_value" (auth_value 2 = allowed, 0 = denied).
+tcc=
+tcc_readable=0
+for db in "/Library/Application Support/com.apple.TCC/TCC.db" "$HOME/Library/Application Support/com.apple.TCC/TCC.db"; do
+  if out=$(/usr/bin/sqlite3 -readonly -separator '|' "$db" 'select service,client,auth_value from access' 2>/dev/null); then
+    tcc_readable=1
+    tcc="$tcc"$'\n'"$out"
+  fi
+done
+
+problems=0
+say() { [ "$quiet" = 1 ] && return 0; printf '%s\n' "$*"; }
+problem() {  # problem "what" "how to fix it"
+  if [ "$problems" = 0 ]; then
+    printf '%s\n' "${bold}${yellow}==> Some apps are not fully set up yet${reset}"
+  fi
+  problems=$((problems + 1))
+  printf '  %s!%s %s\n' "$yellow" "$reset" "$1"
+  [ -n "${2-}" ] && printf '    %s→ %s%s\n' "$cyan" "$2" "$reset"
+  return 0
+}
+
+# the Privacy & Security pane that grants a service, and its human name
+pane() {
+  case $1 in
+    Accessibility) echo "Privacy_Accessibility" ;;
+    ScreenCapture) echo "Privacy_ScreenCapture" ;;
+    AllFiles)      echo "Privacy_AllFiles" ;;
+  esac
+}
+label() {
+  case $1 in
+    Accessibility) echo "Accessibility" ;;
+    ScreenCapture) echo "Screen & System Audio Recording" ;;
+    AllFiles)      echo "Full Disk Access" ;;
+  esac
+}
+fix_hint() { echo "open \"x-apple.systempreferences:com.apple.preference.security?$(pane "$1")\"  # switch $2 on"; }
+
+find_app() {  # path of NAME.app in /Applications or ~/Applications, empty when not installed
+  for d in /Applications "$HOME/Applications"; do
+    [ -d "$d/$1.app" ] && { echo "$d/$1.app"; return 0; }
+  done
+  return 0
+}
+
+while IFS='|' read -r name appname bundle perms; do
+  [ -z "${name-}" ] && continue
+  if [ -z "$(find_app "$appname")" ]; then
+    problem "$name is not installed" "brew bundle did not install it; see the output of \`chezmoi apply\` or run brewfile-drift"
+    continue
+  fi
+  [ "$tcc_readable" = 1 ] || continue
+  for perm in $perms; do
+    service="kTCCService$perm"
+    [ "$perm" = AllFiles ] && service="kTCCServiceSystemPolicyAllFiles"
+    # the last matching row wins; user-level rows come after the system-level ones
+    auth=$(printf '%s\n' "$tcc" | awk -F'|' -v s="$service" -v c="$bundle" '$1 == s && $2 == c { a = $3 } END { print a }')
+    case $auth in
+      2|3) say "  ${green}✓${reset} $name: $(label "$perm")" ;;
+      0)   problem "$name: $(label "$perm") is switched off" "$(fix_hint "$perm" "$name")" ;;
+      *)   problem "$name: $(label "$perm") not granted yet" "$(fix_hint "$perm" "$name")" ;;
+    esac
+  done
+done <<<"$APPS"
+
+if [ "$tcc_readable" = 0 ]; then
+  # also shown with --quiet: otherwise a missing permission would go unnoticed without any sign that nothing was checked
+  printf '  %sPermissions not checked: this terminal cannot read macOS'"'"'s privacy database. Give it Full Disk Access%s\n' "$dim" "$reset"
+  printf '  %s(System Settings > Privacy & Security) and run app-check again.%s\n' "$dim" "$reset"
+fi
+
+# Snapzy's first-run welcome (also where it asks for its permissions)
+if [ -n "$(find_app Snapzy)" ] && [ "$(defaults read com.trongduong.snapzy onboardingCompleted 2>/dev/null)" != 1 ]; then
+  problem "Snapzy: the welcome / onboarding screen was not completed" "open -a Snapzy"
+fi
+
+# GitHub CLI login (the Brewfile installs gh; nothing else in the dotfiles signs it in)
+if command -v gh >/dev/null 2>&1 && ! gh auth status >/dev/null 2>&1; then
+  problem "GitHub CLI is not signed in" "gh auth login"
+fi
+
+if [ "$problems" = 0 ]; then
+  say "${green}All checked apps look fine.${reset}"
+else
+  printf '  %sDetails and what cannot be checked automatically: help apps%s\n' "$dim" "$reset"
+fi
+
+if [ "$quiet" = 0 ]; then
+  cat <<MANUAL
+
+${bold}Cannot be checked from a script (do these once per Mac):${reset}
+  - 1Password: Settings > Developer > "Integrate with 1Password CLI"; Ghostty needs Full Disk Access for it
+  - Itsycal and Vicinae: allow Calendars / Reminders when macOS asks (Vicinae: also Contacts)
+  - Snapzy: allow Camera / Microphone only if you record with them
+{{- if get . "vpn" }}
+  - WireGuard: import ~/.config/wireguard/rozemarijn.conf once (see \`help vpn\`)
+{{- end }}
+  - App Store: be signed in, otherwise the "mas" apps in the Brewfile are skipped
+MANUAL
+fi
+
+exit 0
+{{- end }}
