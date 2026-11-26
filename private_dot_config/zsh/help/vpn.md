@@ -1,7 +1,8 @@
 # VPN to the home network
 
 WireGuard to the UniFi gateway at home. Only traffic for the home subnet goes through the tunnel.
-The config is rendered by chezmoi; every secret lives in 1Password (item `WireGuard Rozemarijn`, vault `Private`).
+The config is written by `vpn-config`; every secret lives in 1Password (item `WireGuard Rozemarijn`, vault `Private`).
+`chezmoi apply` itself never reads 1Password.
 
 ## Connect (daily use)
 
@@ -21,10 +22,10 @@ and your account password, then connect again.
    Quit the terminal with Cmd+Q and open it again. Without it `op` cannot read the app's settings and reports
    "No accounts configured" (`op --debug vault list` shows `settings.json: operation not permitted`).
 3. Run `op vault list`. Approve the prompt (Touch ID); it should list the `Private` vault.
-4. More than one account on this machine (work + personal) is fine: the VPN config and `wg-to-1password`
+4. More than one account on this machine (work + personal) is fine: `vpn-config` and `wg-to-1password`
    always use `vleur.1password.com`. For your own `op` commands add `--account vleur.1password.com`.
 
-`chezmoi apply` needs this whenever it renders the VPN config. A locked 1Password just prompts again.
+Only `vpn-config` and `wg-to-1password` need this, not `chezmoi apply`. A locked 1Password just prompts again.
 
 ## Set up a new machine (once)
 
@@ -42,18 +43,21 @@ and your account password, then connect again.
    Each machine has its own section in the item (`bol`, `home`). The command says which section it writes, and
    asks before it replaces anything that is already there.
 5. Delete the downloaded `.conf`: it contains this machine's private key.
-6. `chezmoi apply` installs the WireGuard app and writes `~/.config/wireguard/rozemarijn.conf`.
-7. WireGuard app > **Import Tunnel(s) from File...** > `~/.config/wireguard/rozemarijn.conf`, and allow the VPN
+6. `chezmoi apply` installs the WireGuard app.
+7. `vpn-config` writes `~/.config/wireguard/rozemarijn.conf` from 1Password.
+8. WireGuard app > **Import Tunnel(s) from File...** > `~/.config/wireguard/rozemarijn.conf`, and allow the VPN
    configuration when macOS asks.
 
 ## When something is off
 
 - **`op` says "No accounts configured"** although the integration is on: the terminal lacks Full Disk Access
   (see above).
-- **`chezmoi apply` fails on `rozemarijn.conf`**: 1Password is not signed in or the item is incomplete. Check with
-  `op read --account vleur.1password.com "op://Private/WireGuard Rozemarijn/endpoint"`.
-- **Changed the item or the template**: run `chezmoi apply`, then remove the tunnel in the WireGuard app and
-  import the file again. The app keeps its own copy.
+- **`vpn-config` cannot read from 1Password**: it lists what to check. "cannot setup session" means the app is
+  locked, not running, or needs a restart.
+- **Is the config there at all?** `chezmoi-drift` (or `vpn-drift`) warns when `vpn = true` but the file is
+  missing. It never reads 1Password, so it cannot tell whether an existing file is outdated: `vpn-config` can.
+- **Changed the item**: run `vpn-config`, then remove the tunnel in the WireGuard app and import the file again.
+  The app keeps its own copy.
 - **Connected but the mini does not answer**: check that `allowed ips` in the item is the home subnet, and that
   no other VPN (the work VPN) claims the same range.
 - **Lost or leaked a config**: delete that client in UniFi, create a new one and run `wg-to-1password` again.
