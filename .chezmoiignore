@@ -1,3 +1,6 @@
 .config/zsh/.zcompdump*
 .zsh_history
 .zsh_plugins.zsh
+README.md
+CLAUDE.md
+install.sh
