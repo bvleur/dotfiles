@@ -81,7 +81,7 @@ v() {
 #: [system config, more] store a UniFi WireGuard client .conf in 1Password for the chezmoi-managed VPN config: wg-to-1password [-m machine] <file.conf> [home-subnet]
 wg-to-1password() {
   emulate -L zsh
-  # Fills the item that private_dot_config/private_wireguard/private_rozemarijn.conf.tmpl reads: shared fields plus one
+  # Fills the item that `vpn-config` (below) reads: shared fields plus one
   # section per machine. The section is this machine's chezmoi `purpose` unless -m names another one, so a .conf
   # for the other laptop can be stored from here: wg-to-1password -m bol <file.conf>.
   # The first run creates the item and needs the home subnet (the AllowedIPs to route).
@@ -159,6 +159,80 @@ wg-to-1password() {
     command op item edit "$item" --account "$account" --vault "$vault" $shared_fields $machine_fields >/dev/null || return 1
     print -r -- "Updated \"$item\": section \"$machine\"."
   fi
-  print -r -- "Next, on the machine \"$machine\": chezmoi apply, then import ~/.config/wireguard/rozemarijn.conf in the WireGuard app."
+  print -r -- "Next, on the machine \"$machine\": vpn-config, then import ~/.config/wireguard/rozemarijn.conf in the WireGuard app."
   print -r -- "The private key is now in 1Password: delete $conf."
+}
+
+#: [system config, more] write the WireGuard config for the home network from 1Password, for this machine (see help vpn)
+vpn-config() {
+  emulate -L zsh
+  # Writes ~/.config/wireguard/rozemarijn.conf, the client config for the UniFi VPN server at home. Nothing secret
+  # lives in the dotfiles repo: every value is read from 1Password, from one item (filled by wg-to-1password):
+  #   shared fields:            server public key, endpoint, allowed ips
+  #   one section per machine:  private key, address, preshared key   (section = this machine's chezmoi `purpose`)
+  # This is a command and not a chezmoi-managed file on purpose: a managed file would read 1Password on every
+  # `chezmoi apply`, so a locked or unreachable 1Password would break every apply. Run it once per machine, and
+  # again after the item changed. The WireGuard app keeps its own copy: import the file again after it changed.
+  local account=vleur.1password.com vault=Private item="WireGuard Rozemarijn"
+  local target=$HOME/.config/wireguard/rozemarijn.conf
+  (( $# == 0 )) || { print -u2 "usage: vpn-config   (no arguments; writes the config for this machine)"; return 1 }
+  (( $+commands[op] )) || { print -u2 "vpn-config: op not installed (brew install --cask 1password-cli)"; return 1 }
+  local machine
+  machine=$(command chezmoi execute-template '{{ .purpose }}') && [[ -n $machine ]] \
+    || { print -u2 "vpn-config: cannot read this machine's purpose from chezmoi (chezmoi cat-config)"; return 1 }
+
+  # One read first, to tell "1Password is not reachable" apart from "the item is incomplete".
+  local ref="op://$vault/$item" err
+  local -A val
+  if ! val[endpoint]=$(command op read --account "$account" "$ref/endpoint" 2>&1); then
+    err=${val[endpoint]}
+    print -u2 "vpn-config: cannot read \"$item\" from 1Password (account $account). Nothing was written."
+    print -u2 "  op said: ${err//$'\n'/ }"
+    print -u2 "  Check, in this order:"
+    print -u2 "   1. the 1Password app is open and unlocked (after an app update: quit it with Cmd+Q and reopen)"
+    print -u2 "   2. 1Password > Settings > Developer > Integrate with 1Password CLI is on"
+    print -u2 "   3. this terminal has Full Disk Access (System Settings > Privacy & Security), then restart it"
+    print -u2 "   4. the item exists: op item get \"$item\" --account $account --vault $vault"
+    print -u2 "  Details: help vpn"
+    return 1
+  fi
+  local -A fields=(public "server public key" allowed "allowed ips" private "$machine/private key" address "$machine/address" psk "$machine/preshared key")
+  local k
+  local -a missing
+  for k in ${(k)fields}; do
+    val[$k]=$(command op read --account "$account" "$ref/${fields[$k]}" 2>/dev/null) && [[ -n ${val[$k]} ]] || missing+=(${fields[$k]})
+  done
+  if (( ${#missing} )); then
+    print -u2 "vpn-config: \"$item\" has no value for: ${(j:, :)${(o)missing}}. Nothing was written."
+    print -u2 "  Fill it on this machine with: wg-to-1password -m $machine <file.conf from UniFi>"
+    return 1
+  fi
+
+  local new="# Written by vpn-config from 1Password (machine \"$machine\"). Do not edit here: change the item, run vpn-config.
+[Interface]
+PrivateKey = ${val[private]}
+Address = ${val[address]}
+
+[Peer]
+PublicKey = ${val[public]}
+PresharedKey = ${val[psk]}
+Endpoint = ${val[endpoint]}
+AllowedIPs = ${val[allowed]}
+PersistentKeepalive = 25"
+  local shown=${target/#$HOME/\~}
+  if [[ -r $target && "$(<$target)" == "$new" ]]; then
+    print -r -- "$shown is up to date for machine \"$machine\"; nothing to import."
+    return 0
+  fi
+  local existed=0; [[ -e $target ]] && existed=1
+  # private from the first byte: directory 700, file 600, written next to the target and moved into place
+  ( umask 077 && command mkdir -p -- ${target:h} && print -r -- "$new" > $target.new && command mv -f -- $target.new $target ) \
+    || { command rm -f -- $target.new; print -u2 "vpn-config: could not write $shown"; return 1 }
+  if (( existed )); then
+    print -r -- "Updated $shown for machine \"$machine\"."
+    print -r -- "The WireGuard app still has the old copy: remove the tunnel there and import the file again."
+  else
+    print -r -- "Wrote $shown for machine \"$machine\"."
+    print -r -- "Next: WireGuard app > Import Tunnel(s) from File... > $shown"
+  fi
 }
