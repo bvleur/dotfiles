@@ -1,5 +1,3 @@
 --style=plain
-# Gruvbox (same palette as yazi, Ghostty and Zed); bat follows the macOS light/dark appearance
---theme=auto:system
---theme-dark="gruvbox-dark"
---theme-light="gruvbox-light"
+# Always dark (Gruvbox), regardless of the macOS appearance: the light variant is too yellow
+--theme="gruvbox-dark"
