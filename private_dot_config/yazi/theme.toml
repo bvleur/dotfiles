@@ -1,4 +1,5 @@
-# Gruvbox flavors (community, installed by run_onchange_after_darwin-yazi-plugins); yazi picks one by the system appearance
+# Always dark Gruvbox flavor (community, installed by run_onchange_after_darwin-yazi-plugins), also when macOS is light:
+# the terminal (Ghostty) stays dark, and yazi would otherwise pick the light flavor and paint a cream background.
 [flavor]
 dark  = "gruvbox-dark"
-light = "gruvbox-light"
+light = "gruvbox-dark"
