@@ -1,6 +1,7 @@
-# Always dark Gruvbox, regardless of the macOS appearance (the light variant is too yellow). The theme sets the
+# Always dark Gruvbox (the light variant is too yellow): normal contrast when macOS is dark, the higher-contrast
+# "Hard" variant when macOS is light (a dark terminal then matches the bright surroundings better). The theme sets the
 # 16 ANSI colours, so every tool that uses plain terminal colours (eza, lazygit, fzf, csvlens, ...) follows.
-theme = Gruvbox Dark
+theme = light:Gruvbox Dark Hard,dark:Gruvbox Dark
 
 # Same coding font as Zed and IntelliJ (installed via the Brewfile); icons (eza, yazi, lazygit) need the Nerd Font build
 font-family = JetBrainsMono Nerd Font
