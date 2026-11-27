@@ -5,3 +5,8 @@ theme = light:Gruvbox Dark Hard,dark:Gruvbox Dark
 
 # Same coding font as Zed and IntelliJ (installed via the Brewfile); icons (eza, yazi, lazygit) need the Nerd Font build
 font-family = JetBrainsMono Nerd Font
+
+# Shell integration stays on (cwd for new tabs, prompt marks, cursor, title), but without `path`: that feature appends
+# Ghostty's bin dir to PATH at the first prompt, after `mise activate`, which makes mise re-order PATH and puts
+# ~/.local/bin ahead of mise's tool paths (`mise doctor` warns). Downside: the `ghostty` CLI isn't on PATH.
+shell-integration-features = no-path
