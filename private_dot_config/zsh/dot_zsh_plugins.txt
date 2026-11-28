@@ -1,5 +1,10 @@
 # .zsh_plugins.txt
 # pick only the plugins you want and remove the rest
+# claude <Tab> completion: Claude Code ships none itself, so this community `_claude` file is used (no plugin code runs, it
+# is only put on fpath). It has to come before the zephyr `completion` plugin below, which runs compinit.
+# Pinned like claude-cmd-deluxe (see the bottom of this file); plugin-drift tells you about newer commits.
+wbingli/zsh-claudecode-completion kind:fpath pin:bcdbb3cd7fe7484846772e85137a73a974fb1227
+
 using:mattmc3/zephyr path:plugins
 color
 completion
