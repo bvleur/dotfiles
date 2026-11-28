@@ -9,6 +9,7 @@ brew "pure"
 # === CLI tools ===
 brew "bat"           # cat replacement (syntax highlight)
 brew "btop"          # resource monitor
+brew "gdu"           # interactive disk usage analyzer (DaisyDisk-like TUI); installs as `gdu-go`, aliased to `gdu`
 brew "yazi"          # cli file manager
 brew "chezmoi"       # dotfiles management (self-bootstrap)
 brew "fzf"           # fuzzy finder

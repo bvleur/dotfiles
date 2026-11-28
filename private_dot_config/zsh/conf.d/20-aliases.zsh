@@ -25,6 +25,10 @@ fi
 #: [more] watch, via viddy (history, pause, diff highlighting)
 command -v viddy >/dev/null 2>&1 && alias watch='viddy'
 
+# Homebrew installs the gdu formula as `gdu-go` (the name `gdu` belongs to GNU du from coreutils, which is not installed here).
+#: [files] interactive disk usage analyzer (gdu), like DaisyDisk in the terminal
+command -v gdu-go >/dev/null 2>&1 && alias gdu='gdu-go'
+
 # --- git (the rest goes through lazygit) ---
 #: [git] git status
 alias gs='git status'
